@@ -19,6 +19,7 @@ color:#222;
 
 
 
+
 header{
 
 height:90px;
@@ -36,6 +37,8 @@ box-shadow:0 2px 10px rgba(0,0,0,0.08);
 
 
 
+
+
 .logo{
 
 font-size:28px;
@@ -48,8 +51,6 @@ color:#182848;
 
 
 
-/* NAVBAR FIX */
-
 nav{
 
 display:flex;
@@ -59,40 +60,39 @@ gap:30px;
 }
 
 
+
+
+
 nav a{
 
 text-decoration:none;
-
 color:#333;
-
 font-weight:bold;
-
 white-space:nowrap;
 
 }
 
 
 
+
+
 #firebaseButtons{
 
 display:flex;
-
 align-items:center;
-
 gap:30px;
 
 }
 
 
 
+
+
 #firebaseButtons a{
 
 text-decoration:none;
-
 color:#333;
-
 font-weight:bold;
-
 white-space:nowrap;
 
 }
@@ -122,15 +122,12 @@ border-radius:25px;
 min-height:520px;
 
 display:flex;
-
 flex-direction:column;
 
 justify-content:center;
-
 align-items:center;
 
 text-align:center;
-
 
 background:
 linear-gradient(
@@ -138,7 +135,6 @@ linear-gradient(
 #182848,
 #4b6cb7
 );
-
 
 color:white;
 
@@ -253,13 +249,17 @@ margin-bottom:40px;
 
 
 
+/* FIXED ARTICLE GRID */
+
 .article-grid{
 
-display:flex;
+display:grid;
 
-justify-content:center;
+grid-template-columns:repeat(3,1fr);
 
 gap:30px;
+
+width:100%;
 
 }
 
@@ -271,7 +271,7 @@ gap:30px;
 
 background:white;
 
-width:320px;
+width:100%;
 
 padding:30px;
 
@@ -286,6 +286,7 @@ box-shadow:
 
 
 
+.card h2,
 .card h3{
 
 font-size:25px;
@@ -433,44 +434,90 @@ background:#182848;
 color:white;
 
 }
-#authArea {
-    display: flex;
-    align-items: center;
-    gap: 30px;
+
+
+
+
+
+#authArea{
+
+display:flex;
+
+align-items:center;
+
+gap:30px;
+
 }
-/* MOBILE RESPONSIVE DESIGN */
-
-@media (max-width: 768px) {
 
 
-header {
+
+
+
+
+
+/* TABLETS */
+
+@media(max-width:900px){
+
+
+.article-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+
+header{
 
 height:auto;
+
 flex-direction:column;
+
 padding:20px;
 
 }
 
 
-.logo {
+
+.logo{
 
 font-size:24px;
+
 margin-bottom:15px;
 
 }
 
 
-nav {
+
+nav{
 
 display:flex;
+
 flex-direction:column;
+
 align-items:center;
+
 gap:15px;
 
 }
 
 
-nav a {
+
+nav a{
 
 margin-left:0;
 
@@ -478,16 +525,17 @@ margin-left:0;
 
 
 
-.hero {
+.hero{
 
 padding:30px 20px;
+
 min-height:400px;
 
 }
 
 
 
-.hero h1 {
+.hero h1{
 
 font-size:38px;
 
@@ -495,7 +543,7 @@ font-size:38px;
 
 
 
-.hero p {
+.hero p{
 
 font-size:18px;
 
@@ -503,43 +551,45 @@ font-size:18px;
 
 
 
-.features {
+.features{
 
 flex-direction:column;
+
 padding:40px 20px;
+
 align-items:center;
 
 }
 
 
 
-.features div {
+.features div{
 
 width:100%;
+
 max-width:350px;
 
 }
 
 
 
-.article-grid {
+.article-grid{
 
-flex-direction:column;
-align-items:center;
-
-}
-
-
-
-.card {
-
-width:90%;
+grid-template-columns:1fr;
 
 }
 
 
 
-.write-section {
+.card{
+
+width:100%;
+
+}
+
+
+
+.write-section{
 
 padding:40px 20px;
 
@@ -547,7 +597,7 @@ padding:40px 20px;
 
 
 
-.write-section h1 {
+.write-section h1{
 
 font-size:35px;
 
@@ -555,7 +605,7 @@ font-size:35px;
 
 
 
-form {
+form{
 
 padding:25px;
 
@@ -565,7 +615,7 @@ padding:25px;
 
 input,
 textarea,
-select {
+select{
 
 font-size:16px;
 
@@ -573,7 +623,7 @@ font-size:16px;
 
 
 
-footer {
+footer{
 
 font-size:14px;
 
