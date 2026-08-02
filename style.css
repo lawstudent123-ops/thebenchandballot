@@ -438,3 +438,146 @@ color:white;
     align-items: center;
     gap: 30px;
 }
+/* MOBILE RESPONSIVE DESIGN */
+
+@media (max-width: 768px) {
+
+
+header {
+
+height:auto;
+flex-direction:column;
+padding:20px;
+
+}
+
+
+.logo {
+
+font-size:24px;
+margin-bottom:15px;
+
+}
+
+
+nav {
+
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:15px;
+
+}
+
+
+nav a {
+
+margin-left:0;
+
+}
+
+
+
+.hero {
+
+padding:30px 20px;
+min-height:400px;
+
+}
+
+
+
+.hero h1 {
+
+font-size:38px;
+
+}
+
+
+
+.hero p {
+
+font-size:18px;
+
+}
+
+
+
+.features {
+
+flex-direction:column;
+padding:40px 20px;
+align-items:center;
+
+}
+
+
+
+.features div {
+
+width:100%;
+max-width:350px;
+
+}
+
+
+
+.article-grid {
+
+flex-direction:column;
+align-items:center;
+
+}
+
+
+
+.card {
+
+width:90%;
+
+}
+
+
+
+.write-section {
+
+padding:40px 20px;
+
+}
+
+
+
+.write-section h1 {
+
+font-size:35px;
+
+}
+
+
+
+form {
+
+padding:25px;
+
+}
+
+
+
+input,
+textarea,
+select {
+
+font-size:16px;
+
+}
+
+
+
+footer {
+
+font-size:14px;
+
+}
+
+
+}
