@@ -15,23 +15,74 @@
 
 <body>
 
-<h1>Create an Account</h1>
+
+<header>
+
+<div class="logo">
+The Bench and Ballot
+</div>
 
 
-<input id="email" type="email" placeholder="Email">
+<nav>
+
+<a href="index.html">Home</a>
+<a href="articles.html">Articles</a>
+<a href="write.html">Write</a>
+<a href="about.html">About</a>
+
+</nav>
+
+</header>
+
+
+
+<section class="write-section">
+
+
+<h1>
+Create an Account
+</h1>
+
+
+<p>
+Join The Bench and Ballot and share your ideas.
+</p>
+
+
+
+<label>
+Email
+</label>
+
+<input id="email" type="email" placeholder="Enter your email">
+
+
+
+<label>
+Password
+</label>
+
+<input id="password" type="password" placeholder="Create a password">
+
+
 
 <br><br>
 
-<input id="password" type="password" placeholder="Password">
-
-<br><br>
 
 <button id="signup">
 Sign Up with Email
 </button>
 
 
-<br><br>
+
+<p>
+
+<a href="#" id="forgot">
+Forgot Password?
+</a>
+
+</p>
+
 
 
 <button id="google">
@@ -40,22 +91,42 @@ Continue with Google
 
 
 
+</section>
+
+
+
+
+
 <script type="module">
 
+
+// Firebase imports
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 
 import { 
+
 getAuth,
+
 createUserWithEmailAndPassword,
+
 GoogleAuthProvider,
-signInWithPopup
+
+signInWithPopup,
+
+sendPasswordResetEmail
+
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 
 
+
+// Firebase configuration
+
+
 const firebaseConfig = {
+
 
 apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
 
@@ -69,20 +140,29 @@ messagingSenderId: "56045247751",
 
 appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
+
 };
 
 
 
+
+
+// Start Firebase
+
+
 const app = initializeApp(firebaseConfig);
 
+
 const auth = getAuth(app);
+
+
 
 
 
 // Email signup
 
 
-document.getElementById("signup").addEventListener("click",()=>{
+document.getElementById("signup").addEventListener("click", ()=>{
 
 
 const email = document.getElementById("email").value;
@@ -91,58 +171,130 @@ const password = document.getElementById("password").value;
 
 
 
+
 createUserWithEmailAndPassword(auth,email,password)
 
 .then(()=>{
 
-alert("Account created!");
+
+alert("Account created successfully!");
 
 window.location.href="index.html";
 
+
 })
+
 
 .catch((error)=>{
 
+
 alert(error.message);
 
-});
-
 
 });
 
 
+});
 
 
-// Google signup
 
 
-document.getElementById("google").addEventListener("click",()=>{
+
+
+
+// Google sign in
+
+
+document.getElementById("google").addEventListener("click", ()=>{
 
 
 const provider = new GoogleAuthProvider();
 
 
+
 signInWithPopup(auth,provider)
 
-.then(()=>{
+.then((result)=>{
+
 
 alert("Signed in with Google!");
 
 window.location.href="index.html";
 
+
 })
+
 
 .catch((error)=>{
 
+
 alert(error.message);
 
+
 });
 
 
 });
+
+
+
+
+
+
+
+
+// Forgot password
+
+
+document.getElementById("forgot").addEventListener("click", ()=>{
+
+
+const email = document.getElementById("email").value;
+
+
+
+if(!email){
+
+
+alert("Please enter your email first.");
+
+
+return;
+
+
+}
+
+
+
+
+
+sendPasswordResetEmail(auth,email)
+
+
+.then(()=>{
+
+
+alert("Password reset email sent. Check your inbox.");
+
+
+})
+
+
+.catch((error)=>{
+
+
+alert(error.message);
+
+
+});
+
+
+});
+
 
 
 </script>
+
 
 
 </body>
