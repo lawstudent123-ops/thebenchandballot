@@ -30,8 +30,8 @@ The Bench and Ballot
 
 <span id="user-area">
 
-<a class="login" href="signup.html">
-Sign Up
+<a class="login" href="login.html">
+Sign In
 </a>
 
 </span>
@@ -39,6 +39,7 @@ Sign Up
 </nav>
 
 </header>
+
 
 
 
@@ -57,6 +58,8 @@ Explore Articles
 </button>
 
 </section>
+
+
 
 
 
@@ -99,6 +102,7 @@ Share arguments, research and perspectives on important topics.
 
 
 </section>
+
 
 
 
@@ -177,6 +181,7 @@ Read Article →
 
 
 
+
 <footer>
 
 <p>
@@ -184,6 +189,7 @@ Read Article →
 </p>
 
 </footer>
+
 
 
 
@@ -197,14 +203,20 @@ Read Article →
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 
-import { 
+import {
+
 getAuth,
+
 onAuthStateChanged,
+
 signOut
+
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 
+
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
 
 
 
@@ -229,17 +241,21 @@ appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
 
 
+
 const app = initializeApp(firebaseConfig);
 
 
 const auth = getAuth(app);
+
 
 const db = getFirestore(app);
 
 
 
 
+
 const userArea = document.getElementById("user-area");
+
 
 
 
@@ -266,7 +282,9 @@ Sign Out
 
 document.getElementById("logout").addEventListener("click", ()=>{
 
+
 signOut(auth);
+
 
 });
 
@@ -279,8 +297,8 @@ else{
 
 userArea.innerHTML = `
 
-<a class="login" href="signup.html">
-Sign Up
+<a class="login" href="login.html">
+Sign In
 </a>
 
 `;
@@ -297,6 +315,7 @@ console.log("Firebase connected successfully!");
 
 
 </script>
+
 
 
 
