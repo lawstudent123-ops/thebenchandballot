@@ -38,7 +38,6 @@ The Bench and Ballot
 
 
 
-
 <section class="write-section">
 
 
@@ -49,7 +48,49 @@ The Bench and Ballot
 </div>
 
 
+
+<hr>
+
+
+<h2>
+Comments
+</h2>
+
+
+<div id="comment-box">
+
+
+<textarea id="commentText" placeholder="Write a comment..."></textarea>
+
+
+<br><br>
+
+
+<button id="postComment">
+Post Comment
+</button>
+
+
+<p id="loginMessage"></p>
+
+
+</div>
+
+
+
+<div id="comments">
+
+<p>
+Loading comments...
+</p>
+
+</div>
+
+
+
 </section>
+
+
 
 
 
@@ -69,17 +110,40 @@ getFirestore,
 
 doc,
 
-getDoc
+getDoc,
+
+collection,
+
+addDoc,
+
+query,
+
+where,
+
+orderBy,
+
+getDocs
 
 } from 
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+
+import {
+
+getAuth,
+
+onAuthStateChanged
+
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
 
 
 
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+apiKey: "AIzaSyAW9aKXaSyawt_UnkEsbjS97c4mwO07dKY",
 
 authDomain: "the-bench-and-ballot.firebaseapp.com",
 
@@ -95,28 +159,79 @@ appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
 
 
+
+
 const app = initializeApp(firebaseConfig);
 
+
 const db = getFirestore(app);
+
+
+const auth = getAuth(app);
+
 
 
 
 
 const articleDiv = document.getElementById("article");
 
+const commentsDiv = document.getElementById("comments");
+
+const commentText = document.getElementById("commentText");
+
+const postButton = document.getElementById("postComment");
+
+const loginMessage = document.getElementById("loginMessage");
+
+
 
 
 const params = new URLSearchParams(window.location.search);
 
-const id = params.get("id");
+const articleID = params.get("id");
 
 
+
+let currentUser = null;
+
+
+
+
+onAuthStateChanged(auth,(user)=>{
+
+
+currentUser = user;
+
+
+if(!user){
+
+
+postButton.disabled = true;
+
+
+loginMessage.innerHTML = 
+"Sign in to post a comment.";
+
+
+}
+
+
+
+});
+
+
+
+
+
+
+
+// LOAD ARTICLE
 
 
 async function loadArticle(){
 
 
-const articleRef = doc(db,"articles",id);
+const articleRef = doc(db,"articles",articleID);
 
 
 const snapshot = await getDoc(articleRef);
@@ -164,26 +279,180 @@ ${article.content}
 
 }
 
+
 else{
 
 
-articleDiv.innerHTML = `
+articleDiv.innerHTML = 
+"<h2>Article not found</h2>";
 
-<h2>
-Article not found
-</h2>
-
-`;
 
 }
 
 
 
 }
+
 
 
 
 loadArticle();
+
+
+
+
+
+
+
+// POST COMMENT
+
+
+postButton.addEventListener("click", async ()=>{
+
+
+if(!currentUser){
+
+
+alert("Please sign in first.");
+
+return;
+
+
+}
+
+
+
+const text = commentText.value.trim();
+
+
+
+if(text === ""){
+
+
+alert("Write a comment first.");
+
+return;
+
+
+}
+
+
+
+await addDoc(collection(db,"comments"),{
+
+
+articleID: articleID,
+
+
+text:text,
+
+
+authorName:
+currentUser.displayName || 
+currentUser.email.split("@")[0],
+
+
+date:new Date()
+
+
+});
+
+
+
+commentText.value="";
+
+
+loadComments();
+
+
+
+});
+
+
+
+
+
+
+
+// LOAD COMMENTS
+
+
+async function loadComments(){
+
+
+commentsDiv.innerHTML="";
+
+
+const q = query(
+
+collection(db,"comments"),
+
+where("articleID","==",articleID),
+
+orderBy("date","desc")
+
+);
+
+
+
+const snapshot = await getDocs(q);
+
+
+
+if(snapshot.empty){
+
+
+commentsDiv.innerHTML =
+"<p>No comments yet.</p>";
+
+
+return;
+
+
+}
+
+
+
+
+snapshot.forEach((comment)=>{
+
+
+const data = comment.data();
+
+
+
+commentsDiv.innerHTML += `
+
+
+<div class="card">
+
+
+<h3>
+${data.authorName}
+</h3>
+
+
+<p>
+${data.text}
+</p>
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+
+}
+
+
+
+loadComments();
 
 
 
