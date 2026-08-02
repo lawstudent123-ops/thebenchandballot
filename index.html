@@ -15,6 +15,7 @@
 
 <body>
 
+
 <header>
 
 <div class="logo">
@@ -130,12 +131,11 @@ The Future of Artificial Intelligence
 How emerging technology could transform law, society and decision-making.
 </p>
 
-<a href="#">
-Read Article →
+<a href="articles.html">
+Read Articles →
 </a>
 
 </div>
-
 
 
 
@@ -149,12 +149,11 @@ Understanding Economic Decisions
 How incentives and choices influence markets and communities.
 </p>
 
-<a href="#">
-Read Article →
+<a href="articles.html">
+Read Articles →
 </a>
 
 </div>
-
 
 
 
@@ -168,8 +167,8 @@ Why the Rule of Law Matters
 Exploring how legal systems protect rights and maintain order.
 </p>
 
-<a href="#">
-Read Article →
+<a href="articles.html">
+Read Articles →
 </a>
 
 </div>
@@ -197,13 +196,11 @@ Read Article →
 
 
 
-
-<!-- FIREBASE CONNECTION -->
-
 <script type="module">
 
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 
 import {
@@ -214,10 +211,8 @@ onAuthStateChanged,
 
 signOut
 
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
-
-
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 
 
@@ -225,7 +220,8 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/12.17.0/firebas
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+
+apiKey: "AIzaSyAW9aKXaSyawt_UnkEsbjS97c4mwO07dKY",
 
 authDomain: "the-bench-and-ballot.firebaseapp.com",
 
@@ -236,6 +232,7 @@ storageBucket: "the-bench-and-ballot.firebasestorage.app",
 messagingSenderId: "56045247751",
 
 appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+
 
 };
 
@@ -249,11 +246,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 
-const db = getFirestore(app);
-
-
-
-
 
 const userArea = document.getElementById("user-area");
 
@@ -261,7 +253,7 @@ const userArea = document.getElementById("user-area");
 
 
 
-onAuthStateChanged(auth, (user)=>{
+onAuthStateChanged(auth,(user)=>{
 
 
 if(user){
@@ -269,8 +261,9 @@ if(user){
 
 userArea.innerHTML = `
 
+
 <span>
-Hello, ${user.displayName || user.email}
+Hello, ${user.displayName || user.email.split("@")[0]}
 </span>
 
 
@@ -283,11 +276,12 @@ Profile
 Sign Out
 </button>
 
+
 `;
 
 
 
-document.getElementById("logout").addEventListener("click", ()=>{
+document.getElementById("logout").addEventListener("click",()=>{
 
 
 signOut(auth);
@@ -305,13 +299,17 @@ else{
 
 userArea.innerHTML = `
 
+
 <a class="login" href="login.html">
 Sign In
 </a>
 
+
 `;
 
+
 }
+
 
 
 });
@@ -323,8 +321,6 @@ console.log("Firebase connected successfully!");
 
 
 </script>
-
-
 
 
 
