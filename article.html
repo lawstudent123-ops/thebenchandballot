@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Article | The Bench and Ballot</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+The Bench and Ballot
+</div>
+
+
+<nav>
+
+<a href="index.html">Home</a>
+<a href="articles.html">Articles</a>
+<a href="write.html">Write</a>
+<a href="about.html">About</a>
+<a href="profile.html">Profile</a>
+
+</nav>
+
+</header>
+
+
+
+
+
+<section class="write-section">
+
+
+<div id="article">
+
+<p>Loading article...</p>
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+
+import {
+
+getFirestore,
+
+doc,
+
+getDoc
+
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+
+authDomain: "the-bench-and-ballot.firebaseapp.com",
+
+projectId: "the-bench-and-ballot",
+
+storageBucket: "the-bench-and-ballot.firebasestorage.app",
+
+messagingSenderId: "56045247751",
+
+appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+
+};
+
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+
+
+const articleDiv = document.getElementById("article");
+
+
+
+const params = new URLSearchParams(window.location.search);
+
+const id = params.get("id");
+
+
+
+
+async function loadArticle(){
+
+
+const articleRef = doc(db,"articles",id);
+
+
+const snapshot = await getDoc(articleRef);
+
+
+
+if(snapshot.exists()){
+
+
+const article = snapshot.data();
+
+
+
+articleDiv.innerHTML = `
+
+
+<h1>
+${article.title}
+</h1>
+
+
+<p>
+<strong>Author:</strong>
+${article.authorName}
+</p>
+
+
+<p>
+<strong>Category:</strong>
+${article.category}
+</p>
+
+
+<hr>
+
+
+<p>
+${article.content}
+</p>
+
+
+`;
+
+
+
+}
+
+else{
+
+
+articleDiv.innerHTML = `
+
+<h2>
+Article not found
+</h2>
+
+`;
+
+}
+
+
+
+}
+
+
+
+loadArticle();
+
+
+
+</script>
+
+
+</body>
+
+</html>
