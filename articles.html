@@ -59,12 +59,11 @@ placeholder="🔍 Search articles..."
 >
 
 
-
 <br><br>
 
 
 
-<div id="articles">
+<div class="article-grid" id="articles">
 
 <p>
 Loading articles...
@@ -75,7 +74,6 @@ Loading articles...
 
 
 </section>
-
 
 
 
@@ -108,9 +106,7 @@ where
 
 
 
-
 const firebaseConfig = {
-
 
 apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
 
@@ -128,26 +124,18 @@ appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
 
 
-
-
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
 
 
-const articlesDiv =
-document.getElementById("articles");
+const articlesDiv = document.getElementById("articles");
 
-
-const search =
-document.getElementById("search");
-
+const search = document.getElementById("search");
 
 
 let allArticles = [];
-
-
 
 
 
@@ -163,13 +151,10 @@ where("status","==","APPROVED")
 );
 
 
-
 const snapshot = await getDocs(q);
 
 
-
 allArticles = [];
-
 
 
 snapshot.forEach(doc=>{
@@ -187,13 +172,10 @@ id:doc.id,
 });
 
 
-
 displayArticles(allArticles);
 
 
 }
-
-
 
 
 
@@ -208,11 +190,9 @@ articlesDiv.innerHTML="";
 
 if(list.length===0){
 
-
 articlesDiv.innerHTML="<p>No articles found.</p>";
 
 return;
-
 
 }
 
@@ -228,9 +208,9 @@ articlesDiv.innerHTML += `
 <div class="card">
 
 
-<h2>
+<h3>
 ${article.title}
-</h2>
+</h3>
 
 
 
@@ -243,7 +223,6 @@ ${article.authorName}
 </a>
 
 </p>
-
 
 
 
@@ -272,7 +251,6 @@ Read Article →
 `;
 
 
-
 });
 
 
@@ -283,28 +261,28 @@ Read Article →
 
 
 
-
 search.addEventListener("input",()=>{
 
 
-const text =
-search.value.toLowerCase();
+const text = search.value.toLowerCase();
 
 
 
-const filtered =
-allArticles.filter(article=>
+const filtered = allArticles.filter(article=>
+
 
 article.title.toLowerCase().includes(text)
+
 ||
+
 article.content.toLowerCase().includes(text)
+
 
 );
 
 
 
 displayArticles(filtered);
-
 
 
 });
@@ -318,6 +296,7 @@ loadArticles();
 
 
 </script>
+
 
 
 </body>
