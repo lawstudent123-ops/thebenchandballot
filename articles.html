@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Articles | The Bench and Ballot</title>
 
@@ -26,6 +29,7 @@ The Bench and Ballot
 <a href="articles.html">Articles</a>
 <a href="write.html">Write</a>
 <a href="about.html">About</a>
+<a href="profile.html">Profile</a>
 
 </nav>
 
@@ -33,74 +37,218 @@ The Bench and Ballot
 
 
 
-<section class="latest">
 
 
-<h2>
-Latest Articles
-</h2>
+<section class="write-section">
 
 
-<div class="article-grid">
+<h1>
+Published Articles
+</h1>
 
-
-<div class="card">
-
-<h3>
-Law & Justice
-</h3>
 
 <p>
-Analysis of legal systems, court decisions and important cases.
+Explore discussions on law, politics, economics and society.
 </p>
 
-<a href="#">
-Read Article →
-</a>
-
-</div>
 
 
-
-<div class="card">
-
-<h3>
-Politics
-</h3>
+<div id="articles">
 
 <p>
-Exploring democracy, elections and public decision-making.
+Loading articles...
 </p>
 
-<a href="#">
-Read Article →
-</a>
-
 </div>
 
-
-
-<div class="card">
-
-<h3>
-Economics
-</h3>
-
-<p>
-Understanding markets, incentives and society.
-</p>
-
-<a href="#">
-Read Article →
-</a>
-
-</div>
-
-
-</div>
 
 
 </section>
+
+
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+
+import {
+
+getFirestore,
+
+collection,
+
+query,
+
+where,
+
+getDocs,
+
+orderBy
+
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+
+
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+
+authDomain: "the-bench-and-ballot.firebaseapp.com",
+
+projectId: "the-bench-and-ballot",
+
+storageBucket: "the-bench-and-ballot.firebasestorage.app",
+
+messagingSenderId: "56045247751",
+
+appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+
+};
+
+
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const db = getFirestore(app);
+
+
+
+const articlesDiv = document.getElementById("articles");
+
+
+
+
+
+
+async function loadArticles(){
+
+
+const q = query(
+
+collection(db,"articles"),
+
+where("status","==","APPROVED")
+
+);
+
+
+
+
+const snapshot = await getDocs(q);
+
+
+
+
+
+if(snapshot.empty){
+
+
+articlesDiv.innerHTML = `
+
+<p>
+No approved articles yet.
+</p>
+
+`;
+
+return;
+
+
+}
+
+
+
+
+articlesDiv.innerHTML = "";
+
+
+
+
+snapshot.forEach((doc)=>{
+
+
+const article = doc.data();
+
+
+
+articlesDiv.innerHTML += `
+
+
+<div class="card">
+
+
+<h2>
+${article.title}
+</h2>
+
+
+
+<p>
+<strong>Author:</strong>
+${article.authorName}
+</p>
+
+
+
+<p>
+<strong>Category:</strong>
+${article.category}
+</p>
+
+
+
+<p>
+
+${article.content.substring(0,250)}...
+
+</p>
+
+
+
+<a href="article.html?id=${doc.id}">
+Read Article →
+</a>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+});
+
+
+
+}
+
+
+
+
+
+loadArticles();
+
+
+
+</script>
+
 
 
 </body>
