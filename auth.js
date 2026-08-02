@@ -8,7 +8,6 @@ import {
 const auth = getAuth();
 
 
-
 onAuthStateChanged(auth, (user) => {
 
 
@@ -18,81 +17,56 @@ onAuthStateChanged(auth, (user) => {
     if (!nav) return;
 
 
+    // remove previous buttons
+    const existing = document.getElementById("authArea");
 
-    // Remove old Firebase buttons if they exist
-
-    const oldButtons = document.getElementById("firebaseButtons");
-
-
-    if (oldButtons) {
-        oldButtons.remove();
+    if(existing){
+        existing.remove();
     }
 
 
 
+    const authArea = document.createElement("span");
 
-    const authDiv = document.createElement("div");
-
-    authDiv.id = "firebaseButtons";
-
+    authArea.id = "authArea";
 
 
 
 
-    if (user) {
+    if(user){
 
 
-        authDiv.innerHTML = `
+        authArea.innerHTML = `
+            <a href="profile.html">
+                Profile
+            </a>
 
-        <a href="profile.html">
-            Profile
-        </a>
-
-
-        <a href="#" id="logoutButton">
-            Sign Out
-        </a>
-
+            <a href="#" id="logout">
+                Sign Out
+            </a>
         `;
 
 
 
-        const logoutButton =
-        authDiv.querySelector("#logoutButton");
-
-
-
-        logoutButton.addEventListener("click", async (e)=>{
-
+        authArea.querySelector("#logout")
+        .addEventListener("click", async(e)=>{
 
             e.preventDefault();
 
-
             await signOut(auth);
 
-
-            window.location.reload();
-
+            location.reload();
 
         });
 
 
-
-    } 
-
+    } else {
 
 
-
-
-    else {
-
-
-        authDiv.innerHTML = `
-
-        <a href="login.html">
-            Sign In
-        </a>
-
+        authArea.innerHTML = `
+            <a href="login.html">
+                Sign In
+            </a>
         `;
 
 
@@ -100,10 +74,7 @@ onAuthStateChanged(auth, (user) => {
 
 
 
-
-
-
-    nav.appendChild(authDiv);
+    nav.appendChild(authArea);
 
 
 
