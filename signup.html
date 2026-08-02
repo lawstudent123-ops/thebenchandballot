@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sign Up | The Bench and Ballot</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<h1>Create an Account</h1>
+
+<input id="email" type="email" placeholder="Email">
+
+<br><br>
+
+<input id="password" type="password" placeholder="Password">
+
+<br><br>
+
+<button id="signup">
+Sign Up
+</button>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+import { 
+getAuth,
+createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+  authDomain: "the-bench-and-ballot.firebaseapp.com",
+  projectId: "the-bench-and-ballot",
+  storageBucket: "the-bench-and-ballot.firebasestorage.app",
+  messagingSenderId: "56045247751",
+  appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+
+document.getElementById("signup").addEventListener("click", () => {
+
+const email = document.getElementById("email").value;
+
+const password = document.getElementById("password").value;
+
+
+createUserWithEmailAndPassword(auth, email, password)
+
+.then(() => {
+
+alert("Account created successfully!");
+
+window.location.href="index.html";
+
+})
+
+.catch((error)=>{
+
+alert(error.message);
+
+});
+
+
+});
+
+</script>
+
+
+</body>
+
+</html>
