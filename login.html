@@ -42,46 +42,12 @@ The Bench and Ballot
 
 
 <h1>
-Sign In
+Join The Bench and Ballot
 </h1>
 
 
 <p>
-Welcome back to The Bench and Ballot.
-</p>
-
-
-
-<label>
-Email
-</label>
-
-<input id="email" type="email" placeholder="Enter your email">
-
-
-
-<label>
-Password
-</label>
-
-<input id="password" type="password" placeholder="Enter your password">
-
-
-<br><br>
-
-
-<button id="login" type="button">
-Sign In
-</button>
-
-
-
-<p>
-
-<a href="#" id="forgot">
-Forgot Password?
-</a>
-
+Sign in using your Google account.
 </p>
 
 
@@ -94,15 +60,7 @@ Continue with Google
 
 
 
-<p>
-Don't have an account?
-<a href="signup.html">Sign Up</a>
-</p>
-
-
-
 </section>
-
 
 
 
@@ -121,20 +79,13 @@ import {
 
 getAuth,
 
-signInWithEmailAndPassword,
-
 GoogleAuthProvider,
 
-signInWithPopup,
-
-sendPasswordResetEmail,
-
-setPersistence,
-
-browserLocalPersistence
+signInWithPopup
 
 } from 
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
 
 
 
@@ -170,69 +121,8 @@ const auth = getAuth(app);
 
 
 
-await setPersistence(auth, browserLocalPersistence);
 
 
-
-
-
-
-
-// LOGIN
-
-
-document.getElementById("login").addEventListener("click", async()=>{
-
-
-const email =
-document.getElementById("email").value.trim();
-
-
-const password =
-document.getElementById("password").value.trim();
-
-
-
-
-try{
-
-
-await signInWithEmailAndPassword(
-auth,
-email,
-password
-);
-
-
-alert("Signed in successfully!");
-
-window.location.href="index.html";
-
-
-}
-
-
-
-catch(error){
-
-
-alert(error.code);
-
-
-}
-
-
-});
-
-
-
-
-
-
-
-
-
-// GOOGLE LOGIN
 
 
 document.getElementById("google").addEventListener("click", async()=>{
@@ -260,80 +150,7 @@ window.location.href="index.html";
 catch(error){
 
 
-alert(error.code);
-
-
-}
-
-
-
-});
-
-
-
-
-
-
-
-
-
-// FORGOT PASSWORD
-
-
-document.getElementById("forgot").addEventListener("click", async(e)=>{
-
-
-e.preventDefault();
-
-
-
-const email =
-document.getElementById("email").value.trim();
-
-
-
-
-if(email === ""){
-
-
-alert("Please enter your email first.");
-
-return;
-
-
-}
-
-
-
-
-try{
-
-
-await sendPasswordResetEmail(
-auth,
-email
-);
-
-
-
-alert("Password reset email sent! Check your Gmail.");
-
-
-
-}
-
-
-
-catch(error){
-
-
-console.log(error);
-
-
-alert(
-"Password reset failed: " + error.code
-);
-
+alert(error.message);
 
 
 }
