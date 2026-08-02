@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -39,6 +40,7 @@ Sign In
 </nav>
 
 </header>
+
 
 
 
@@ -195,6 +197,7 @@ Read Article →
 
 
 
+
 <!-- FIREBASE CONNECTION -->
 
 <script type="module">
@@ -214,9 +217,7 @@ signOut
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 
-
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
-
 
 
 
@@ -272,6 +273,12 @@ userArea.innerHTML = `
 Hello, ${user.displayName || user.email}
 </span>
 
+
+<a href="profile.html">
+Profile
+</a>
+
+
 <button id="logout">
 Sign Out
 </button>
@@ -290,6 +297,7 @@ signOut(auth);
 
 
 }
+
 
 
 else{
@@ -315,6 +323,7 @@ console.log("Firebase connected successfully!");
 
 
 </script>
+
 
 
 
