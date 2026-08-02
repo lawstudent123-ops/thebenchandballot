@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -51,23 +50,30 @@ Loading...
 
 <div id="profile">
 
-<p>Loading profile...</p>
+<p>
+Loading profile...
+</p>
 
 </div>
+
 
 
 
 
 <h2>
-My Articles
+Articles
 </h2>
+
 
 
 <div id="articles">
 
-<p>Loading articles...</p>
+<p>
+Loading articles...
+</p>
 
 </div>
+
 
 
 
@@ -79,7 +85,9 @@ Log Out
 </button>
 
 
+
 </section>
+
 
 
 
@@ -95,6 +103,7 @@ import { initializeApp } from
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 
+
 import {
 
 getAuth,
@@ -105,6 +114,7 @@ signOut
 
 } from 
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
 
 
 import {
@@ -131,8 +141,8 @@ getDoc
 
 
 
-const firebaseConfig = {
 
+const firebaseConfig = {
 
 apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
 
@@ -165,40 +175,159 @@ const db = getFirestore(app);
 
 
 
-const profile = document.getElementById("profile");
-
-const articles = document.getElementById("articles");
-
-const welcome = document.getElementById("welcome");
+const profileDiv =
+document.getElementById("profile");
 
 
+const articlesDiv =
+document.getElementById("articles");
+
+
+const welcome =
+document.getElementById("welcome");
+
+
+const logout =
+document.getElementById("logout");
 
 
 
 
-onAuthStateChanged(auth, async(user)=>{
+
+
+
+// GET PROFILE ID FROM URL
+
+
+const params =
+new URLSearchParams(window.location.search);
+
+
+
+let profileID =
+params.get("id");
+
+
+
+
+
+
+
+// IF NO ID, SHOW LOGGED IN USER PROFILE
+
+
+onAuthStateChanged(auth,(user)=>{
+
+
+if(!profileID){
 
 
 if(user){
 
 
+profileID=user.uid;
 
-const userDoc = await getDoc(
 
-doc(db,"users",user.uid)
+loadProfile(profileID);
+
+
+}
+
+
+else{
+
+
+welcome.innerHTML =
+"Guest Profile";
+
+
+profileDiv.innerHTML = `
+
+<p>
+Please sign in to view your profile.
+</p>
+
+
+<a href="login.html">
+Sign In
+</a>
+
+`;
+
+
+
+articlesDiv.innerHTML="";
+
+
+logout.style.display="none";
+
+
+}
+
+
+}
+
+
+else{
+
+
+loadProfile(profileID);
+
+
+}
+
+
+
+});
+
+
+
+
+
+
+
+
+
+async function loadProfile(userID){
+
+
+
+const userDoc =
+await getDoc(
+
+doc(db,"users",userID)
 
 );
 
 
 
-let username = "User";
+
+let username =
+"User";
+
+
+
+let bio =
+"";
+
+
 
 
 
 if(userDoc.exists()){
 
 
-username = userDoc.data().username || "User";
+const data =
+userDoc.data();
+
+
+username =
+data.username || "User";
+
+
+bio =
+data.bio || "";
+
 
 
 }
@@ -211,7 +340,7 @@ username = userDoc.data().username || "User";
 
 welcome.innerHTML =
 
-`Hello ${username} 👋`;
+`${username}'s Profile 👋`;
 
 
 
@@ -219,25 +348,23 @@ welcome.innerHTML =
 
 
 
-profile.innerHTML = `
+profileDiv.innerHTML = `
 
 
 <h2>
+
 ${username}
+
 </h2>
 
 
-<p>
-Email: ${user.email}
-</p>
-
 
 <p>
-Account created:
 
-${new Date(user.metadata.creationTime).toDateString()}
+${bio}
 
 </p>
+
 
 
 `;
@@ -249,12 +376,12 @@ ${new Date(user.metadata.creationTime).toDateString()}
 
 
 
-
-const q = query(
+const q =
+query(
 
 collection(db,"articles"),
 
-where("authorID","==",user.uid)
+where("authorID","==",userID)
 
 );
 
@@ -262,7 +389,16 @@ where("authorID","==",user.uid)
 
 
 
-const snapshot = await getDocs(q);
+
+const snapshot =
+await getDocs(q);
+
+
+
+
+
+articlesDiv.innerHTML="";
+
 
 
 
@@ -271,15 +407,13 @@ const snapshot = await getDocs(q);
 if(snapshot.empty){
 
 
-articles.innerHTML = `
+articlesDiv.innerHTML = `
 
 <p>
 No articles written yet.
 </p>
 
 `;
-
-
 
 return;
 
@@ -291,43 +425,50 @@ return;
 
 
 
-articles.innerHTML = "";
+snapshot.forEach((articleDoc)=>{
+
+
+const article =
+articleDoc.data();
 
 
 
 
+articlesDiv.innerHTML += `
 
-snapshot.forEach((doc)=>{
-
-
-const article = doc.data();
-
-
-
-articles.innerHTML += `
 
 
 <div class="card">
 
 
+
 <h3>
+
+
+<a href="article.html?id=${articleDoc.id}">
+
 ${article.title}
+
+</a>
+
+
 </h3>
 
 
-<p>
-Category: ${article.category}
-</p>
-
 
 <p>
-Status: ${article.status}
+
+Category:
+${article.category}
+
 </p>
+
 
 
 </div>
 
 
+
 `;
 
 
@@ -336,53 +477,19 @@ Status: ${article.status}
 
 
 
-
-
-
-}
-
-
-
-else{
-
-
-welcome.innerHTML =
-"Hello Guest 👋";
-
-
-
-profile.innerHTML = `
-
-
-<p>
-You must be signed in.
-</p>
-
-
-<a href="login.html">
-Sign In
-</a>
-
-
-`;
-
-
-
 }
 
 
 
 
-});
 
 
 
 
+// LOG OUT
 
 
-
-
-document.getElementById("logout").addEventListener("click",()=>{
+logout.addEventListener("click",()=>{
 
 
 signOut(auth);
@@ -395,11 +502,11 @@ window.location.href="index.html";
 
 
 
-</script>
 
+
+</script>
 
 
 </body>
 
 </html>
-```
