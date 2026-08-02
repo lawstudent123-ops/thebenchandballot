@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,9 +12,11 @@
 
 </head>
 
+
 <body>
 
 <h1>Create an Account</h1>
+
 
 <input id="email" type="email" placeholder="Email">
 
@@ -24,28 +27,50 @@
 <br><br>
 
 <button id="signup">
-Sign Up
+Sign Up with Email
 </button>
+
+
+<br><br>
+
+
+<button id="google">
+Continue with Google
+</button>
+
 
 
 <script type="module">
 
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
 
 import { 
 getAuth,
-createUserWithEmailAndPassword
+createUserWithEmailAndPassword,
+GoogleAuthProvider,
+signInWithPopup
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 
+
 const firebaseConfig = {
-  apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
-  authDomain: "the-bench-and-ballot.firebaseapp.com",
-  projectId: "the-bench-and-ballot",
-  storageBucket: "the-bench-and-ballot.firebasestorage.app",
-  messagingSenderId: "56045247751",
-  appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+
+apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+
+authDomain: "the-bench-and-ballot.firebaseapp.com",
+
+projectId: "the-bench-and-ballot",
+
+storageBucket: "the-bench-and-ballot.firebasestorage.app",
+
+messagingSenderId: "56045247751",
+
+appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+
 };
+
 
 
 const app = initializeApp(firebaseConfig);
@@ -53,18 +78,24 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 
-document.getElementById("signup").addEventListener("click", () => {
+
+// Email signup
+
+
+document.getElementById("signup").addEventListener("click",()=>{
+
 
 const email = document.getElementById("email").value;
 
 const password = document.getElementById("password").value;
 
 
-createUserWithEmailAndPassword(auth, email, password)
 
-.then(() => {
+createUserWithEmailAndPassword(auth,email,password)
 
-alert("Account created successfully!");
+.then(()=>{
+
+alert("Account created!");
 
 window.location.href="index.html";
 
@@ -78,6 +109,38 @@ alert(error.message);
 
 
 });
+
+
+
+
+// Google signup
+
+
+document.getElementById("google").addEventListener("click",()=>{
+
+
+const provider = new GoogleAuthProvider();
+
+
+signInWithPopup(auth,provider)
+
+.then(()=>{
+
+alert("Signed in with Google!");
+
+window.location.href="index.html";
+
+})
+
+.catch((error)=>{
+
+alert(error.message);
+
+});
+
+
+});
+
 
 </script>
 
