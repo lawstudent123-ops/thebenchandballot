@@ -42,25 +42,24 @@ The Bench and Ballot
 
 
 <h1>
-Join The Bench and Ballot
+Sign In
 </h1>
 
 
 <p>
-Sign in using your Google account.
+Welcome to The Bench and Ballot.
 </p>
 
 
 
-
-<button id="google" type="button">
+<button id="google">
 Continue with Google
 </button>
 
 
 
-
 </section>
+
 
 
 
@@ -87,6 +86,18 @@ signInWithPopup
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 
+import {
+
+getFirestore,
+
+doc,
+
+setDoc
+
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+
 
 
 
@@ -106,7 +117,6 @@ messagingSenderId: "56045247751",
 
 appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
-
 };
 
 
@@ -120,31 +130,79 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 
+const db = getFirestore(app);
 
 
 
 
 
-document.getElementById("google").addEventListener("click", async()=>{
+
+document
+.getElementById("google")
+.addEventListener("click", async()=>{
 
 
-const provider = new GoogleAuthProvider();
+
+const provider =
+new GoogleAuthProvider();
 
 
 
 try{
 
 
+const result =
 await signInWithPopup(auth,provider);
 
 
-alert("Signed in with Google!");
+
+const user =
+result.user;
+
+
+
+
+
+// CREATE / UPDATE USER PROFILE
+
+await setDoc(
+
+doc(db,"users",user.uid),
+
+{
+
+
+username: user.displayName,
+
+email: user.email,
+
+photo: user.photoURL,
+
+joined: new Date()
+
+
+},
+
+{
+merge:true
+}
+
+);
+
+
+
+
+
+alert("Signed in successfully!");
+
 
 
 window.location.href="index.html";
 
 
+
 }
+
 
 
 catch(error){
@@ -158,6 +216,8 @@ alert(error.message);
 
 
 });
+
+
 
 
 
