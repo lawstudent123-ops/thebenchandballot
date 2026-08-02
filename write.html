@@ -1,412 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Write an Article | The Bench and Ballot</title>
-
 <link rel="stylesheet" href="style.css">
-
 </head>
-
-
 <body>
 
-
 <header>
-
-<div class="logo">
-The Bench and Ballot
-</div>
-
-
+<div class="logo">The Bench and Ballot</div>
 <nav>
-
 <a href="index.html">Home</a>
 <a href="articles.html">Articles</a>
 <a href="write.html">Write</a>
 <a href="about.html">About</a>
-
+<a href="profile.html">Profile</a>
 </nav>
-
 </header>
 
-
-
-
-
 <section class="write-section">
+<h1>Create Your Article</h1>
+<p>Share your thoughts on law, politics, economics or society.</p>
 
-
-<h1>
-Create Your Article
-</h1>
-
-
-<p>
-Share your thoughts on law, politics, economics or society.
-</p>
-
-
-
-
-<form>
-
-
-<label>
-Article Title
-</label>
-
+<label>Article Title</label>
 <input id="title" type="text" placeholder="Enter your title">
 
-
-
-<label>
-Category
-</label>
-
-
+<label>Category</label>
 <select id="category">
-
 <option>Law</option>
-
 <option>Politics</option>
-
 <option>Economics</option>
-
 <option>Other</option>
-
 </select>
 
-
-
-
-<label>
-Your Article
-</label>
-
-
+<label>Your Article</label>
 <textarea id="content" placeholder="Write your article here..."></textarea>
 
-
-
-
-<button id="publish" type="button">
-Publish Article
-</button>
-
-
-</form>
-
-
+<button id="publish" type="button">Publish Article</button>
 </section>
 
-
-
-
-
-
-
 <script type="module">
-
-
-// Firebase imports
-
-import { initializeApp } from 
-"https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
-
-
-import {
-
-getFirestore,
-
-collection,
-
-addDoc
-
-} from 
-"https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
-
-
-import {
-
-getAuth,
-
-onAuthStateChanged
-
-} from 
-"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
-
-
-// Firebase AI imports
-
-import {
-
-getAI,
-
-getGenerativeModel,
-
-GoogleAIBackend
-
-} from 
-"https://www.gstatic.com/firebasejs/12.17.0/firebase-ai.js";
-
-
-
-
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-ai.js";
 
 const firebaseConfig = {
-
-apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
-
-authDomain: "the-bench-and-ballot.firebaseapp.com",
-
-projectId: "the-bench-and-ballot",
-
-storageBucket: "the-bench-and-ballot.firebasestorage.app",
-
-messagingSenderId: "56045247751",
-
-appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
-
+apiKey:"AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+authDomain:"the-bench-and-ballot.firebaseapp.com",
+projectId:"the-bench-and-ballot",
+storageBucket:"the-bench-and-ballot.firebasestorage.app",
+messagingSenderId:"56045247751",
+appId:"1:56045247751:web:22b9dcb631f3e95d2179a2"
 };
 
-
-
-
-
-
-
-// Firebase setup
-
-
-const app = initializeApp(firebaseConfig);
-
-
-const db = getFirestore(app);
-
-
-const auth = getAuth(app);
-
-
-
-
-
-
-// Gemini setup
-
-
-const ai = getAI(app, {
-
-backend: new GoogleAIBackend()
-
-});
-
-
-
-const model = getGenerativeModel(ai, {
-
-model: "gemini-3.6-flash"
-
-});
-
-
-
-
-
-
-
-let currentUser = null;
-
-
-
-onAuthStateChanged(auth,(user)=>{
-
-
-currentUser = user;
-
-
-});
-
-
-
-
-
-
-
-document.getElementById("publish")
-.addEventListener("click", async ()=>{
-
-
-
-if(!currentUser){
-
-
-alert("Please sign in before publishing an article.");
-
-return;
-
-
-}
-
-
-
-
-
-
-const title = document.getElementById("title").value.trim();
-
-
-const category = document.getElementById("category").value;
-
-
-const content = document.getElementById("content").value.trim();
-
-
-
-
-
-
-if(title === "" || content === ""){
-
-
-alert("Please complete your article before publishing.");
-
-return;
-
-
-}
-
-
-
-
-
-// Ask Gemini to review article
-
-
-let aiResult = "NEEDS REVIEW";
-
-
-
-try{
-
-
-const prompt = `
-
-You are an article reviewer for The Bench and Ballot.
-
-Review this article:
-
-Title:
-${title}
-
-Category:
-${category}
-
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
+
+const ai=getAI(app,{backend:new GoogleAIBackend()});
+const model=getGenerativeModel(ai,{model:"gemini-3.6-flash"});
+
+let currentUser=null;
+onAuthStateChanged(auth,user=>{currentUser=user;});
+
+document.getElementById("publish").addEventListener("click",async()=>{
+ if(!currentUser){alert("Please sign in before publishing an article.");return;}
+ const title=document.getElementById("title").value.trim();
+ const category=document.getElementById("category").value;
+ const content=document.getElementById("content").value.trim();
+ if(!title||!content){alert("Please complete your article before publishing.");return;}
+
+ const userDoc=await getDoc(doc(db,"users",currentUser.uid));
+ let authorName=currentUser.email.split("@")[0];
+ if(userDoc.exists()){
+   authorName=userDoc.data().username || userDoc.data().name || authorName;
+ }
+
+ let aiResult="NEEDS REVIEW";
+ try{
+   const prompt=`You are an article reviewer for The Bench and Ballot.
+Review this article.
+
+Title: ${title}
+Category: ${category}
 Article:
 ${content}
 
-
-Respond ONLY:
-
+Reply with ONLY:
 APPROVED
-
 or
+NEEDS REVIEW`;
+   const result=await model.generateContent(prompt);
+   aiResult=result.response.text().trim();
+ }catch(e){
+   console.log(e);
+ }
 
-NEEDS REVIEW
+ await addDoc(collection(db,"articles"),{
+   title,
+   category,
+   content,
+   authorID:currentUser.uid,
+   authorEmail:currentUser.email,
+   authorName,
+   status:aiResult,
+   aiReview:aiResult,
+   date:new Date()
+ });
 
-`;
-
-
-
-const result = await model.generateContent(prompt);
-
-
-aiResult = result.response.text().trim();
-
-
-
-}
-
-catch(error){
-
-
-console.log(error);
-
-
-aiResult = "NEEDS REVIEW";
-
-
-}
-
-
-
-
-
-
-
-// Save article
-
-
-await addDoc(collection(db,"articles"),{
-
-
-title:title,
-
-
-category:category,
-
-
-content:content,
-
-
-
-authorID:currentUser.uid,
-
-
-authorEmail:currentUser.email,
-
-
-authorName:
-currentUser.displayName || 
-currentUser.email.split("@")[0],
-
-
-
-status: aiResult,
-
-
-aiReview: aiResult,
-
-
-
-date:new Date()
-
-
+ alert("Article submitted. AI review: "+aiResult);
+ window.location.href="articles.html";
 });
-
-
-
-
-
-alert("Article submitted. AI review: " + aiResult);
-
-
-window.location.href="index.html";
-
-
-
-});
-
-
-
 </script>
 
-
 </body>
-
 </html>
