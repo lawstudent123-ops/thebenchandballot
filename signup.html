@@ -69,7 +69,7 @@ Password
 <br><br>
 
 
-<button id="signup">
+<button id="signup" type="button">
 Sign Up with Email
 </button>
 
@@ -85,7 +85,7 @@ Forgot Password?
 
 
 
-<button id="google">
+<button id="google" type="button">
 Continue with Google
 </button>
 
@@ -100,12 +100,10 @@ Continue with Google
 <script type="module">
 
 
-// Firebase imports
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 
-import { 
+import {
 
 getAuth,
 
@@ -120,9 +118,18 @@ sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 
+import {
+
+getFirestore,
+
+doc,
+
+setDoc
+
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 
-// Firebase configuration
+
 
 
 const firebaseConfig = {
@@ -140,14 +147,10 @@ messagingSenderId: "56045247751",
 
 appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
-
 };
 
 
 
-
-
-// Start Firebase
 
 
 const app = initializeApp(firebaseConfig);
@@ -156,45 +159,77 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 
+const db = getFirestore(app);
+
+
+
+
 
 
 
 // Email signup
 
 
-document.getElementById("signup").addEventListener("click", ()=>{
+document.getElementById("signup").addEventListener("click", async ()=>{
 
 
-const email = document.getElementById("email").value;
+const email = document.getElementById("email").value.trim();
 
-const password = document.getElementById("password").value;
-
-
+const password = document.getElementById("password").value.trim();
 
 
-createUserWithEmailAndPassword(auth,email,password)
 
-.then(()=>{
+try{
+
+
+const result = await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+
+
+const user = result.user;
+
+
+
+await setDoc(doc(db,"users",user.uid),{
+
+
+email: user.email,
+
+name: user.email.split("@")[0],
+
+joined: new Date()
+
+
+});
+
 
 
 alert("Account created successfully!");
 
+
 window.location.href="index.html";
 
 
-})
+
+}
 
 
-.catch((error)=>{
+catch(error){
 
 
 alert(error.message);
 
 
-});
+}
 
 
+
 });
+
 
 
 
@@ -205,33 +240,55 @@ alert(error.message);
 // Google sign in
 
 
-document.getElementById("google").addEventListener("click", ()=>{
+document.getElementById("google").addEventListener("click", async ()=>{
 
 
 const provider = new GoogleAuthProvider();
 
 
 
-signInWithPopup(auth,provider)
+try{
 
-.then((result)=>{
+
+const result = await signInWithPopup(auth,provider);
+
+
+
+const user = result.user;
+
+
+
+await setDoc(doc(db,"users",user.uid),{
+
+
+email: user.email,
+
+name: user.displayName || "User",
+
+joined: new Date()
+
+
+},{merge:true});
+
 
 
 alert("Signed in with Google!");
 
+
 window.location.href="index.html";
 
 
-})
+}
 
 
-.catch((error)=>{
+catch(error){
 
 
 alert(error.message);
 
 
-});
+}
+
 
 
 });
@@ -249,7 +306,7 @@ alert(error.message);
 document.getElementById("forgot").addEventListener("click", ()=>{
 
 
-const email = document.getElementById("email").value;
+const email = document.getElementById("email").value.trim();
 
 
 
@@ -258,12 +315,10 @@ if(!email){
 
 alert("Please enter your email first.");
 
-
 return;
 
 
 }
-
 
 
 
