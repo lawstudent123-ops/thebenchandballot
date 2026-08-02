@@ -30,10 +30,12 @@ The Bench and Ballot
 <a href="write.html">Write</a>
 <a href="about.html">About</a>
 
-
 </nav>
 
 </header>
+
+
+
 
 
 
@@ -47,7 +49,9 @@ The Bench and Ballot
 </div>
 
 
+
 <hr>
+
 
 
 <h2>
@@ -56,10 +60,7 @@ Comments
 
 
 
-<textarea 
-id="commentText" 
-placeholder="Write a comment..."
-></textarea>
+<textarea id="commentText" placeholder="Write a comment..."></textarea>
 
 
 <br><br>
@@ -81,7 +82,14 @@ Post Comment
 </div>
 
 
+
 </section>
+
+
+
+
+
+
 
 
 
@@ -117,7 +125,6 @@ getDocs
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 
-
 import {
 
 getAuth,
@@ -131,7 +138,9 @@ onAuthStateChanged
 
 
 
+
 const firebaseConfig = {
+
 
 apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
 
@@ -146,6 +155,7 @@ messagingSenderId: "56045247751",
 appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
 };
+
 
 
 
@@ -201,8 +211,9 @@ let currentUser = null;
 
 
 
-// CHECK USER LOGIN
 
+
+// CHECK LOGIN
 
 onAuthStateChanged(auth,(user)=>{
 
@@ -212,9 +223,6 @@ currentUser = user;
 
 
 if(user){
-
-
-console.log("Logged in:", user.email);
 
 
 postComment.disabled = false;
@@ -230,17 +238,14 @@ loginMessage.innerHTML =
 else{
 
 
-console.log("No user logged in");
-
-
 postComment.disabled = true;
 
 
 loginMessage.innerHTML =
-"Please sign in to comment.";
-
+"Sign in with Google to comment.";
 
 }
+
 
 
 });
@@ -251,21 +256,12 @@ loginMessage.innerHTML =
 
 
 
+
+
+
 // LOAD ARTICLE
 
-
 async function loadArticle(){
-
-
-if(!articleID){
-
-articleDiv.innerHTML =
-"<h2>No article selected</h2>";
-
-return;
-
-}
-
 
 
 const ref =
@@ -294,34 +290,34 @@ ${article.title}
 </h1>
 
 
+
 <p>
+<strong>Author:</strong>
 
-<strong>
-Author:
-</strong>
-
+<a href="profile.html?id=${article.authorID}">
 ${article.authorName}
+</a>
 
 </p>
+
+
 
 
 <p>
-
-<strong>
-Category:
-</strong>
-
+<strong>Category:</strong>
 ${article.category}
-
 </p>
+
 
 
 <hr>
 
 
+
 <p>
 ${article.content}
 </p>
+
 
 
 `;
@@ -339,7 +335,9 @@ articleDiv.innerHTML =
 }
 
 
+
 }
+
 
 
 loadArticle();
@@ -350,21 +348,18 @@ loadArticle();
 
 
 
-// POST COMMENT
 
 
-postComment.addEventListener("click", async()=>{
+// ADD COMMENT
 
 
-console.log("Current user:",currentUser);
-
+postComment.addEventListener("click",async()=>{
 
 
 if(!currentUser){
 
 
 alert("Please sign in first.");
-
 
 return;
 
@@ -378,11 +373,11 @@ commentText.value.trim();
 
 
 
+
 if(text===""){
 
 
-alert("Please write a comment.");
-
+alert("Write a comment first.");
 
 return;
 
@@ -391,27 +386,24 @@ return;
 
 
 
-try{
 
 
 await addDoc(collection(db,"comments"),{
 
 
-articleID:articleID,
+articleID: articleID,
 
 
-text:text,
+text: text,
 
 
 authorName:
-
 currentUser.displayName || 
 currentUser.email.split("@")[0],
 
 
 
 userID:
-
 currentUser.uid,
 
 
@@ -429,27 +421,10 @@ commentText.value="";
 loadComments();
 
 
-alert("Comment posted!");
-
-
-
-}
-
-
-catch(error){
-
-
-console.log(error);
-
-
-alert(error.message);
-
-
-}
-
-
 
 });
+
+
 
 
 
@@ -466,8 +441,8 @@ async function loadComments(){
 commentsDiv.innerHTML="";
 
 
-const q =
-query(
+
+const q = query(
 
 collection(db,"comments"),
 
@@ -479,8 +454,11 @@ orderBy("date","desc")
 
 
 
+
 const snapshot =
 await getDocs(q);
+
+
 
 
 
@@ -495,6 +473,9 @@ return;
 
 
 }
+
+
+
 
 
 
@@ -513,24 +494,12 @@ commentsDiv.innerHTML += `
 
 
 <h3>
-
-
-<a href="profile.html?id=${data.userID}">
-
-
 ${data.authorName}
-
-
-</a>
-
-
 </h3>
 
 
 <p>
-
 ${data.text}
-
 </p>
 
 
@@ -545,7 +514,9 @@ ${data.text}
 });
 
 
+
 }
+
 
 
 
@@ -556,7 +527,7 @@ loadComments();
 </script>
 
 
+
 </body>
 
 </html>
-<script type="module" src="auth.js"></script>
