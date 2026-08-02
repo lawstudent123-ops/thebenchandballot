@@ -25,17 +25,10 @@ The Bench and Ballot
 
 <nav>
 
-
-
 <a href="index.html">Home</a>
-  
 <a href="articles.html">Articles</a>
-  
 <a href="write.html">Write</a>
-  
 <a href="about.html">About</a>
-
-
 
 </nav>
 
@@ -58,10 +51,16 @@ Explore discussions on law, politics, economics and society.
 </p>
 
 
+
 <input 
 id="search"
+type="text"
 placeholder="🔍 Search articles..."
 >
+
+
+
+<br><br>
 
 
 
@@ -91,18 +90,17 @@ import { initializeApp } from
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 
-
 import {
 
 getFirestore,
 
 collection,
 
+getDocs,
+
 query,
 
-where,
-
-getDocs
+where
 
 } from 
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
@@ -112,6 +110,7 @@ getDocs
 
 
 const firebaseConfig = {
+
 
 apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
 
@@ -133,7 +132,6 @@ appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
 const app = initializeApp(firebaseConfig);
 
-
 const db = getFirestore(app);
 
 
@@ -153,9 +151,7 @@ let allArticles = [];
 
 
 
-
 async function loadArticles(){
-
 
 
 const q = query(
@@ -168,37 +164,15 @@ where("status","==","APPROVED")
 
 
 
-const snapshot =
-await getDocs(q);
+const snapshot = await getDocs(q);
 
 
 
-
-if(snapshot.empty){
-
-
-articlesDiv.innerHTML = `
-
-<p>
-No approved articles yet.
-</p>
-
-`;
-
-return;
-
-
-}
+allArticles = [];
 
 
 
-
-
-allArticles=[];
-
-
-
-snapshot.forEach((doc)=>{
+snapshot.forEach(doc=>{
 
 
 allArticles.push({
@@ -217,8 +191,9 @@ id:doc.id,
 displayArticles(allArticles);
 
 
-
 }
+
+
 
 
 
@@ -228,6 +203,19 @@ function displayArticles(list){
 
 
 articlesDiv.innerHTML="";
+
+
+
+if(list.length===0){
+
+
+articlesDiv.innerHTML="<p>No articles found.</p>";
+
+return;
+
+
+}
+
 
 
 
@@ -241,66 +229,44 @@ articlesDiv.innerHTML += `
 
 
 <h2>
-
 ${article.title}
-
 </h2>
 
 
 
-
 <p>
 
-<strong>
-Author:
-</strong>
-
+<strong>Author:</strong>
 
 <a href="profile.html?id=${article.authorID}">
-
 ${article.authorName}
-
 </a>
 
-
 </p>
 
 
 
 
 <p>
-
-<strong>
 Category:
-</strong>
-
 ${article.category}
-
 </p>
-
-
 
 
 
 <p>
-
 ${article.content.substring(0,250)}...
-
 </p>
-
 
 
 
 <a href="article.html?id=${article.id}">
-
 Read Article →
-
 </a>
 
 
 
 </div>
-
 
 
 `;
@@ -321,36 +287,19 @@ Read Article →
 search.addEventListener("input",()=>{
 
 
-const value =
+const text =
 search.value.toLowerCase();
 
 
 
 const filtered =
-allArticles.filter(article=>{
+allArticles.filter(article=>
 
-
-return (
-
-article.title.toLowerCase().includes(value)
-
+article.title.toLowerCase().includes(text)
 ||
-
-article.authorName.toLowerCase().includes(value)
-
-||
-
-article.category.toLowerCase().includes(value)
-
-||
-
-article.content.toLowerCase().includes(value)
-
+article.content.toLowerCase().includes(text)
 
 );
-
-
-});
 
 
 
@@ -364,10 +313,7 @@ displayArticles(filtered);
 
 
 
-
-
 loadArticles();
-
 
 
 
@@ -377,4 +323,3 @@ loadArticles();
 </body>
 
 </html>
-<script type="module" src="auth.js"></script>
