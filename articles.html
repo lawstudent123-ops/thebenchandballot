@@ -52,6 +52,12 @@ Explore discussions on law, politics, economics and society.
 </p>
 
 
+<input 
+id="search"
+placeholder="🔍 Search articles..."
+>
+
+
 
 <div id="articles">
 
@@ -71,11 +77,13 @@ Loading articles...
 
 
 
+
 <script type="module">
 
 
 import { initializeApp } from 
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
 
 
 import {
@@ -88,13 +96,10 @@ query,
 
 where,
 
-getDocs,
-
-orderBy
+getDocs
 
 } from 
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
-
 
 
 
@@ -127,7 +132,16 @@ const db = getFirestore(app);
 
 
 
-const articlesDiv = document.getElementById("articles");
+const articlesDiv =
+document.getElementById("articles");
+
+
+const search =
+document.getElementById("search");
+
+
+
+let allArticles = [];
 
 
 
@@ -135,6 +149,7 @@ const articlesDiv = document.getElementById("articles");
 
 
 async function loadArticles(){
+
 
 
 const q = query(
@@ -147,9 +162,8 @@ where("status","==","APPROVED")
 
 
 
-
-const snapshot = await getDocs(q);
-
+const snapshot =
+await getDocs(q);
 
 
 
@@ -173,16 +187,45 @@ return;
 
 
 
-articlesDiv.innerHTML = "";
 
+allArticles=[];
 
 
 
 snapshot.forEach((doc)=>{
 
 
-const article = doc.data();
+allArticles.push({
 
+id:doc.id,
+
+...doc.data()
+
+});
+
+
+});
+
+
+
+displayArticles(allArticles);
+
+
+
+}
+
+
+
+
+
+function displayArticles(list){
+
+
+articlesDiv.innerHTML="";
+
+
+
+list.forEach(article=>{
 
 
 articlesDiv.innerHTML += `
@@ -192,22 +235,44 @@ articlesDiv.innerHTML += `
 
 
 <h2>
+
 ${article.title}
+
 </h2>
 
 
 
+
 <p>
-<strong>Author:</strong>
+
+<strong>
+Author:
+</strong>
+
+
+<a href="profile.html?id=${article.authorID}">
+
 ${article.authorName}
+
+</a>
+
+
 </p>
+
 
 
 
 <p>
-<strong>Category:</strong>
+
+<strong>
+Category:
+</strong>
+
 ${article.category}
+
 </p>
+
+
 
 
 
@@ -219,8 +284,11 @@ ${article.content.substring(0,250)}...
 
 
 
-<a href="article.html?id=${doc.id}">
+
+<a href="article.html?id=${article.id}">
+
 Read Article →
+
 </a>
 
 
@@ -236,8 +304,57 @@ Read Article →
 });
 
 
-
 }
+
+
+
+
+
+
+
+search.addEventListener("input",()=>{
+
+
+const value =
+search.value.toLowerCase();
+
+
+
+const filtered =
+allArticles.filter(article=>{
+
+
+return (
+
+article.title.toLowerCase().includes(value)
+
+||
+
+article.authorName.toLowerCase().includes(value)
+
+||
+
+article.category.toLowerCase().includes(value)
+
+||
+
+article.content.toLowerCase().includes(value)
+
+
+);
+
+
+});
+
+
+
+displayArticles(filtered);
+
+
+
+});
+
+
 
 
 
@@ -247,8 +364,8 @@ loadArticles();
 
 
 
-</script>
 
+</script>
 
 
 </body>
