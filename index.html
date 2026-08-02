@@ -23,19 +23,16 @@ The Bench and Ballot
 </div>
 
 
-
-
 <nav>
 
 <a href="index.html">Home</a>
-  
+
 <a href="articles.html">Articles</a>
-  
+
 <a href="write.html">Write</a>
-  
+
 <a href="about.html">About</a>
 
-</nav>
 
 <span id="user-area">
 
@@ -45,7 +42,9 @@ Sign In
 
 </span>
 
+
 </nav>
+
 
 </header>
 
@@ -59,13 +58,16 @@ Sign In
 Where law, politics and ideas meet.
 </h1>
 
+
 <p>
 A platform for thoughtful discussions, independent articles and diverse perspectives.
 </p>
 
+
 <button onclick="window.location.href='articles.html'">
 Explore Articles
 </button>
+
 
 </section>
 
@@ -88,6 +90,7 @@ Explore legal issues, justice and the systems that shape society.
 
 
 
+
 <div>
 
 <h2>🗳️ Politics</h2>
@@ -97,6 +100,7 @@ Discuss governments, democracy and decisions that impact communities.
 </p>
 
 </div>
+
 
 
 
@@ -117,12 +121,12 @@ Share arguments, research and perspectives on important topics.
 
 
 
-
 <section class="latest">
 
 <h2>
 Featured Articles
 </h2>
+
 
 
 <div class="article-grid">
@@ -138,11 +142,13 @@ The Future of Artificial Intelligence
 How emerging technology could transform law, society and decision-making.
 </p>
 
+
 <a href="articles.html">
 Read Articles →
 </a>
 
 </div>
+
 
 
 
@@ -152,15 +158,20 @@ Read Articles →
 Understanding Economic Decisions
 </h3>
 
+
 <p>
 How incentives and choices influence markets and communities.
 </p>
+
 
 <a href="articles.html">
 Read Articles →
 </a>
 
+
 </div>
+
+
 
 
 
@@ -170,20 +181,26 @@ Read Articles →
 Why the Rule of Law Matters
 </h3>
 
+
 <p>
 Exploring how legal systems protect rights and maintain order.
 </p>
+
 
 <a href="articles.html">
 Read Articles →
 </a>
 
+
 </div>
 
 
+
 </div>
+
 
 </section>
+
 
 
 
@@ -196,7 +213,10 @@ Read Articles →
 © 2026 The Bench and Ballot | A platform for discussion and debate
 </p>
 
+
 </footer>
+
+
 
 
 
@@ -228,7 +248,7 @@ signOut
 const firebaseConfig = {
 
 
-apiKey: "AIzaSyAW9aKXaSyawt_UnkEsbjS97c4mwO07dKY",
+apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
 
 authDomain: "the-bench-and-ballot.firebaseapp.com",
 
@@ -254,7 +274,8 @@ const auth = getAuth(app);
 
 
 
-const userArea = document.getElementById("user-area");
+const userArea =
+document.getElementById("user-area");
 
 
 
@@ -267,11 +288,6 @@ if(user){
 
 
 userArea.innerHTML = `
-
-
-<span>
-Hello, ${user.displayName || user.email.split("@")[0]}
-</span>
 
 
 <a href="profile.html">
@@ -288,13 +304,20 @@ Sign Out
 
 
 
-document.getElementById("logout").addEventListener("click",()=>{
+
+document
+.getElementById("logout")
+.addEventListener("click", async()=>{
 
 
-signOut(auth);
+await signOut(auth);
+
+
+window.location.reload();
 
 
 });
+
 
 
 }
@@ -315,16 +338,12 @@ Sign In
 `;
 
 
+
 }
 
 
 
 });
-
-
-
-console.log("Firebase connected successfully!");
-
 
 
 </script>
@@ -334,4 +353,3 @@ console.log("Firebase connected successfully!");
 </body>
 
 </html>
-<script type="module" src="auth.js"></script>
