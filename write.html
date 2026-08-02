@@ -64,8 +64,6 @@ Article Title
 
 
 
-
-
 <label>
 Category
 </label>
@@ -86,7 +84,6 @@ Category
 
 
 
-
 <label>
 Your Article
 </label>
@@ -97,11 +94,9 @@ Your Article
 
 
 
-
 <button id="publish" type="button">
 Publish Article
 </button>
-
 
 
 </form>
@@ -118,7 +113,10 @@ Publish Article
 <script type="module">
 
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+// Firebase imports
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 
 import {
@@ -129,8 +127,8 @@ collection,
 
 addDoc
 
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
-
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 
 import {
@@ -139,7 +137,23 @@ getAuth,
 
 onAuthStateChanged
 
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+
+// Firebase AI imports
+
+import {
+
+getAI,
+
+getGenerativeModel,
+
+GoogleAIBackend
+
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-ai.js";
+
 
 
 
@@ -166,6 +180,10 @@ appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
 
 
+
+// Firebase setup
+
+
 const app = initializeApp(firebaseConfig);
 
 
@@ -177,10 +195,32 @@ const auth = getAuth(app);
 
 
 
+
+
+// Gemini setup
+
+
+const ai = getAI(app, {
+
+backend: new GoogleAIBackend()
+
+});
+
+
+
+const model = getGenerativeModel(ai, {
+
+model: "gemini-3.6-flash"
+
+});
+
+
+
+
+
+
+
 let currentUser = null;
-
-
-
 
 
 
@@ -198,7 +238,8 @@ currentUser = user;
 
 
 
-document.getElementById("publish").addEventListener("click", async ()=>{
+document.getElementById("publish")
+.addEventListener("click", async ()=>{
 
 
 
@@ -207,11 +248,11 @@ if(!currentUser){
 
 alert("Please sign in before publishing an article.");
 
-
 return;
 
 
 }
+
 
 
 
@@ -235,8 +276,69 @@ if(title === "" || content === ""){
 
 alert("Please complete your article before publishing.");
 
-
 return;
+
+
+}
+
+
+
+
+
+// Ask Gemini to review article
+
+
+let aiResult = "NEEDS REVIEW";
+
+
+
+try{
+
+
+const prompt = `
+
+You are an article reviewer for The Bench and Ballot.
+
+Review this article:
+
+Title:
+${title}
+
+Category:
+${category}
+
+Article:
+${content}
+
+
+Respond ONLY:
+
+APPROVED
+
+or
+
+NEEDS REVIEW
+
+`;
+
+
+
+const result = await model.generateContent(prompt);
+
+
+aiResult = result.response.text().trim();
+
+
+
+}
+
+catch(error){
+
+
+console.log(error);
+
+
+aiResult = "NEEDS REVIEW";
 
 
 }
@@ -247,44 +349,42 @@ return;
 
 
 
+// Save article
+
+
 await addDoc(collection(db,"articles"),{
 
 
-title: title,
+title:title,
 
 
-category: category,
+category:category,
 
 
-content: content,
-
-
-
-// User information
-
-authorID: currentUser.uid,
-
-
-authorEmail: currentUser.email,
-
-
-authorName: currentUser.displayName || currentUser.email.split("@")[0],
+content:content,
 
 
 
-
-// AI review system
-
-status: "AI checking",
+authorID:currentUser.uid,
 
 
-aiReview: "waiting",
+authorEmail:currentUser.email,
+
+
+authorName:
+currentUser.displayName || 
+currentUser.email.split("@")[0],
 
 
 
+status: aiResult,
 
-date: new Date()
 
+aiReview: aiResult,
+
+
+
+date:new Date()
 
 
 });
@@ -293,7 +393,7 @@ date: new Date()
 
 
 
-alert("Article submitted! AI is now checking your article.");
+alert("Article submitted. AI review: " + aiResult);
 
 
 window.location.href="index.html";
@@ -305,9 +405,6 @@ window.location.href="index.html";
 
 
 </script>
-
-
-
 
 
 </body>
