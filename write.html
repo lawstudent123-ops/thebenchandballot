@@ -104,9 +104,11 @@ Publish Article
 
 <script type="module">
 
+
 // Firebase imports
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
 
 import { 
 getFirestore,
@@ -125,12 +127,19 @@ onAuthStateChanged
 // Firebase configuration
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
-  authDomain: "the-bench-and-ballot.firebaseapp.com",
-  projectId: "the-bench-and-ballot",
-  storageBucket: "the-bench-and-ballot.firebasestorage.app",
-  messagingSenderId: "56045247751",
-  appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+
+apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+
+authDomain: "the-bench-and-ballot.firebaseapp.com",
+
+projectId: "the-bench-and-ballot",
+
+storageBucket: "the-bench-and-ballot.firebasestorage.app",
+
+messagingSenderId: "56045247751",
+
+appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+
 };
 
 
@@ -149,13 +158,14 @@ let currentUser = null;
 
 
 
-// Check if user is logged in
+// Check login status
 
 onAuthStateChanged(auth, (user)=>{
 
 currentUser = user;
 
 });
+
 
 
 
@@ -182,6 +192,16 @@ const content = document.getElementById("content").value;
 
 
 
+if(title === "" || content === ""){
+
+alert("Please complete your article before publishing.");
+
+return;
+
+}
+
+
+
 await addDoc(collection(db,"articles"),{
 
 
@@ -193,7 +213,13 @@ content: content,
 
 author: currentUser.email,
 
-status: "pending",
+
+// AI review system
+
+status: "AI checking",
+
+aiReview: "waiting",
+
 
 date: new Date()
 
@@ -202,7 +228,7 @@ date: new Date()
 
 
 
-alert("Article submitted! It is now waiting for approval.");
+alert("Article submitted! AI is now checking your article.");
 
 window.location.href="index.html";
 
