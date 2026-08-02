@@ -125,6 +125,17 @@ addDoc
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 
+import {
+
+getAuth,
+
+onAuthStateChanged
+
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+
+
 
 
 const firebaseConfig = {
@@ -154,9 +165,51 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 
+const auth = getAuth(app);
+
+
+
+
+
+// YOUR ADMIN UID
+
+const ADMIN_UID = "bQpL4AEK1jc6bsrtJ3i8nVsXKG23";
+
+
+
+
+
+// PROTECT ADMIN PAGE
+
+onAuthStateChanged(auth,(user)=>{
+
+
+if(!user || user.uid !== ADMIN_UID){
+
+
+alert("Access denied");
+
+
+window.location.href="index.html";
+
+
+}
+
+
+});
+
+
+
+
+
+
+
+
 
 const articles =
 document.getElementById("articles");
+
+
 
 
 
@@ -171,6 +224,19 @@ articles.innerHTML="";
 
 const snapshot =
 await getDocs(collection(db,"articles"));
+
+
+
+if(snapshot.empty){
+
+
+articles.innerHTML="<p>No articles found.</p>";
+
+return;
+
+
+}
+
 
 
 
@@ -200,7 +266,7 @@ ${data.authorName}
 
 
 <p>
-ID:
+Article ID:
 ${article.id}
 </p>
 
@@ -226,6 +292,9 @@ Delete Article
 
 
 }
+
+
+
 
 
 
@@ -281,6 +350,19 @@ document.getElementById("articleID").value;
 const text =
 document.getElementById("commentText").value;
 
+
+
+
+if(articleID==="" || text===""){
+
+
+alert("Fill in both fields");
+
+
+return;
+
+
+}
 
 
 
