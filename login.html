@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login | The Bench and Ballot</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+The Bench and Ballot
+</div>
+
+<nav>
+
+<a href="index.html">Home</a>
+<a href="articles.html">Articles</a>
+<a href="write.html">Write</a>
+<a href="about.html">About</a>
+
+</nav>
+
+</header>
+
+
+
+
+<section class="write-section">
+
+
+<h1>
+Sign In
+</h1>
+
+
+<p>
+Welcome back to The Bench and Ballot.
+</p>
+
+
+
+<label>
+Email
+</label>
+
+<input id="email" type="email" placeholder="Enter your email">
+
+
+
+<label>
+Password
+</label>
+
+<input id="password" type="password" placeholder="Enter your password">
+
+
+<br><br>
+
+
+<button id="login" type="button">
+Sign In
+</button>
+
+
+<p>
+
+<a href="#" id="forgot">
+Forgot Password?
+</a>
+
+</p>
+
+
+
+<button id="google" type="button">
+Continue with Google
+</button>
+
+
+
+<p>
+Don't have an account?
+<a href="signup.html">Sign Up</a>
+</p>
+
+
+
+</section>
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+
+import {
+
+getAuth,
+
+signInWithEmailAndPassword,
+
+GoogleAuthProvider,
+
+signInWithPopup,
+
+sendPasswordResetEmail
+
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+
+authDomain: "the-bench-and-ballot.firebaseapp.com",
+
+projectId: "the-bench-and-ballot",
+
+storageBucket: "the-bench-and-ballot.firebasestorage.app",
+
+messagingSenderId: "56045247751",
+
+appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+
+};
+
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const auth = getAuth(app);
+
+
+
+
+
+// Email sign in
+
+
+document.getElementById("login").addEventListener("click", ()=>{
+
+
+const email = document.getElementById("email").value.trim();
+
+const password = document.getElementById("password").value.trim();
+
+
+
+signInWithEmailAndPassword(auth,email,password)
+
+
+.then(()=>{
+
+
+alert("Signed in successfully!");
+
+window.location.href="index.html";
+
+
+})
+
+
+.catch((error)=>{
+
+
+alert(error.message);
+
+
+});
+
+
+});
+
+
+
+
+
+
+
+// Google sign in
+
+
+document.getElementById("google").addEventListener("click", ()=>{
+
+
+const provider = new GoogleAuthProvider();
+
+
+
+signInWithPopup(auth,provider)
+
+
+.then(()=>{
+
+
+alert("Signed in with Google!");
+
+window.location.href="index.html";
+
+
+})
+
+
+.catch((error)=>{
+
+
+alert(error.message);
+
+
+});
+
+
+});
+
+
+
+
+
+
+
+// Forgot password
+
+
+document.getElementById("forgot").addEventListener("click", ()=>{
+
+
+const email = document.getElementById("email").value.trim();
+
+
+
+if(!email){
+
+alert("Enter your email first.");
+
+return;
+
+}
+
+
+
+sendPasswordResetEmail(auth,email)
+
+
+.then(()=>{
+
+
+alert("Password reset email sent!");
+
+})
+
+
+.catch((error)=>{
+
+
+alert(error.message);
+
+
+});
+
+
+});
+
+
+
+
+</script>
+
+
+</body>
+
+</html>
