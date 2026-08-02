@@ -22,6 +22,7 @@
 The Bench and Ballot
 </div>
 
+
 <nav>
 
 <a href="index.html">Home</a>
@@ -74,6 +75,7 @@ Sign In
 </button>
 
 
+
 <p>
 
 <a href="#" id="forgot">
@@ -84,9 +86,11 @@ Forgot Password?
 
 
 
+
 <button id="google" type="button">
 Continue with Google
 </button>
+
 
 
 
@@ -140,7 +144,7 @@ browserLocalPersistence
 const firebaseConfig = {
 
 
-apiKey: "AIzaSyAW9aKXaSyawt_UnkEsbjS97c4mwO07dKY",
+apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
 
 authDomain: "the-bench-and-ballot.firebaseapp.com",
 
@@ -167,9 +171,10 @@ const auth = getAuth(app);
 
 
 
-// KEEP USER SIGNED IN BETWEEN PAGES
 
-setPersistence(auth, browserLocalPersistence);
+// Keep user signed in across pages
+
+await setPersistence(auth, browserLocalPersistence);
 
 
 
@@ -180,7 +185,7 @@ setPersistence(auth, browserLocalPersistence);
 // EMAIL LOGIN
 
 
-document.getElementById("login").addEventListener("click", ()=>{
+document.getElementById("login").addEventListener("click", async ()=>{
 
 
 const email = document.getElementById("email").value.trim();
@@ -189,27 +194,28 @@ const password = document.getElementById("password").value.trim();
 
 
 
-signInWithEmailAndPassword(auth,email,password)
+try{
 
 
-.then(()=>{
+await signInWithEmailAndPassword(auth,email,password);
 
 
 alert("Signed in successfully!");
 
+
 window.location.href="index.html";
 
 
-})
+}
 
 
-.catch((error)=>{
+catch(error){
 
 
 alert(error.message);
 
 
-});
+}
 
 
 });
@@ -224,34 +230,35 @@ alert(error.message);
 // GOOGLE LOGIN
 
 
-document.getElementById("google").addEventListener("click", ()=>{
+document.getElementById("google").addEventListener("click", async ()=>{
 
 
 const provider = new GoogleAuthProvider();
 
 
 
-signInWithPopup(auth,provider)
+try{
 
 
-.then(()=>{
+await signInWithPopup(auth,provider);
 
 
 alert("Signed in with Google!");
 
+
 window.location.href="index.html";
 
 
-})
+}
 
 
-.catch((error)=>{
+catch(error){
 
 
 alert(error.message);
 
 
-});
+}
 
 
 });
@@ -263,10 +270,13 @@ alert(error.message);
 
 
 
-// FORGOT PASSWORD
+// PASSWORD RESET
 
 
-document.getElementById("forgot").addEventListener("click", ()=>{
+document.getElementById("forgot").addEventListener("click", async (e)=>{
+
+
+e.preventDefault();
 
 
 const email = document.getElementById("email").value.trim();
@@ -286,26 +296,25 @@ return;
 
 
 
+try{
 
-sendPasswordResetEmail(auth,email)
 
-
-.then(()=>{
+await sendPasswordResetEmail(auth,email);
 
 
 alert("Password reset email sent!");
 
 
-})
+}
 
 
-.catch((error)=>{
+catch(error){
 
 
 alert(error.message);
 
 
-});
+}
 
 
 });
