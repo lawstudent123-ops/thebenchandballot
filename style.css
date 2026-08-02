@@ -433,3 +433,8 @@ background:#182848;
 color:white;
 
 }
+#authArea {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
