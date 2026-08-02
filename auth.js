@@ -1,5 +1,5 @@
 import { 
-getAuth, 
+getAuth,
 onAuthStateChanged,
 signOut
 } from 
@@ -18,24 +18,20 @@ if(nav){
 onAuthStateChanged(auth,(user)=>{
 
 
-// Remove old auth buttons
-
-const oldAuth =
-document.getElementById("authButton");
+let oldButtons = document.getElementById("firebaseButtons");
 
 
-const oldProfile =
-document.getElementById("profileButton");
-
-
-if(oldAuth){
-oldAuth.remove();
+if(oldButtons){
+oldButtons.remove();
 }
 
 
-if(oldProfile){
-oldProfile.remove();
-}
+
+
+const div = document.createElement("div");
+
+div.id = "firebaseButtons";
+
 
 
 
@@ -43,14 +39,14 @@ oldProfile.remove();
 if(user){
 
 
-nav.innerHTML += `
+div.innerHTML = `
 
-<a id="profileButton" href="profile.html">
+<a href="profile.html">
 Profile
 </a>
 
 
-<a id="authButton" href="#">
+<a href="#" id="logoutButton">
 Sign Out
 </a>
 
@@ -58,18 +54,17 @@ Sign Out
 
 
 
-document
-.getElementById("authButton")
-.onclick = async()=>{
+div.querySelector("#logoutButton")
+.addEventListener("click",async(e)=>{
 
+e.preventDefault();
 
 await signOut(auth);
 
+location.reload();
 
-window.location.reload();
+});
 
-
-};
 
 
 }
@@ -79,9 +74,9 @@ window.location.reload();
 else{
 
 
-nav.innerHTML += `
+div.innerHTML = `
 
-<a id="authButton" href="login.html">
+<a href="login.html">
 Sign In
 </a>
 
@@ -93,7 +88,11 @@ Sign In
 
 
 
-});
 
+nav.appendChild(div);
+
+
+
+});
 
 }
