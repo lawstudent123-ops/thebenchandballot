@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin | The Bench and Ballot</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+The Bench and Ballot
+</div>
+
+
+<nav>
+
+<a href="index.html">Home</a>
+<a href="articles.html">Articles</a>
+<a href="write.html">Write</a>
+<a href="about.html">About</a>
+
+</nav>
+
+</header>
+
+
+
+
+
+<section class="write-section">
+
+
+<h1>
+Admin Dashboard 🛡️
+</h1>
+
+
+<p>
+Manage articles and comments.
+</p>
+
+
+
+
+<h2>
+Articles
+</h2>
+
+
+<div id="articles">
+
+Loading articles...
+
+</div>
+
+
+
+
+
+
+<h2>
+Add Comment
+</h2>
+
+
+<input id="articleID" placeholder="Article ID">
+
+
+<textarea id="commentText" placeholder="Comment"></textarea>
+
+
+<br><br>
+
+
+<button id="addComment">
+Add Comment
+</button>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+
+import {
+
+getFirestore,
+
+collection,
+
+getDocs,
+
+deleteDoc,
+
+doc,
+
+addDoc
+
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+
+
+
+const firebaseConfig = {
+
+
+apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+
+authDomain: "the-bench-and-ballot.firebaseapp.com",
+
+projectId: "the-bench-and-ballot",
+
+storageBucket: "the-bench-and-ballot.firebasestorage.app",
+
+messagingSenderId: "56045247751",
+
+appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+
+};
+
+
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const db = getFirestore(app);
+
+
+
+const articles =
+document.getElementById("articles");
+
+
+
+
+
+async function loadArticles(){
+
+
+articles.innerHTML="";
+
+
+
+const snapshot =
+await getDocs(collection(db,"articles"));
+
+
+
+snapshot.forEach(article=>{
+
+
+const data =
+article.data();
+
+
+
+articles.innerHTML += `
+
+
+<div class="card">
+
+
+<h3>
+${data.title}
+</h3>
+
+
+<p>
+Author:
+${data.authorName}
+</p>
+
+
+<p>
+ID:
+${article.id}
+</p>
+
+
+
+<button onclick="deleteArticle('${article.id}')">
+
+Delete Article
+
+</button>
+
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+
+}
+
+
+
+
+
+window.deleteArticle = async(id)=>{
+
+
+const confirmDelete =
+confirm("Delete this article?");
+
+
+
+if(confirmDelete){
+
+
+await deleteDoc(
+doc(db,"articles",id)
+);
+
+
+
+alert("Article deleted");
+
+
+loadArticles();
+
+
+}
+
+
+
+};
+
+
+
+
+
+
+
+
+document
+.getElementById("addComment")
+.addEventListener("click",async()=>{
+
+
+
+const articleID =
+document.getElementById("articleID").value;
+
+
+
+const text =
+document.getElementById("commentText").value;
+
+
+
+
+await addDoc(collection(db,"comments"),{
+
+
+articleID:articleID,
+
+
+text:text,
+
+
+authorName:"Admin",
+
+
+date:new Date()
+
+
+});
+
+
+
+alert("Comment added!");
+
+
+
+});
+
+
+
+
+
+loadArticles();
+
+
+
+</script>
+
+
+
+</body>
+
+</html>
