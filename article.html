@@ -37,8 +37,6 @@ The Bench and Ballot
 
 
 
-
-
 <section class="write-section">
 
 
@@ -58,11 +56,14 @@ Comments
 
 
 
-<div>
+<textarea 
+id="commentText" 
+placeholder="Write a comment..."
+></textarea>
 
-<textarea id="commentText" placeholder="Write a comment..."></textarea>
 
 <br><br>
+
 
 <button id="postComment">
 Post Comment
@@ -70,8 +71,6 @@ Post Comment
 
 
 <p id="loginMessage"></p>
-
-</div>
 
 
 
@@ -83,9 +82,6 @@ Post Comment
 
 
 </section>
-
-
-
 
 
 
@@ -121,6 +117,7 @@ getDocs
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 
+
 import {
 
 getAuth,
@@ -134,11 +131,9 @@ onAuthStateChanged
 
 
 
-
 const firebaseConfig = {
 
-
-apiKey: "AIzaSyAW9aKXaSyawt_UnkEsbjS97c4mwO07dKY",
+apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
 
 authDomain: "the-bench-and-ballot.firebaseapp.com",
 
@@ -149,7 +144,6 @@ storageBucket: "the-bench-and-ballot.firebasestorage.app",
 messagingSenderId: "56045247751",
 
 appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
-
 
 };
 
@@ -169,21 +163,35 @@ const auth = getAuth(app);
 
 
 
-const articleDiv = document.getElementById("article");
-
-const commentsDiv = document.getElementById("comments");
-
-const commentText = document.getElementById("commentText");
-
-const postComment = document.getElementById("postComment");
-
-const loginMessage = document.getElementById("loginMessage");
+const articleDiv =
+document.getElementById("article");
 
 
+const commentsDiv =
+document.getElementById("comments");
 
-const params = new URLSearchParams(window.location.search);
 
-const articleID = params.get("id");
+const commentText =
+document.getElementById("commentText");
+
+
+const postComment =
+document.getElementById("postComment");
+
+
+const loginMessage =
+document.getElementById("loginMessage");
+
+
+
+
+
+const params =
+new URLSearchParams(window.location.search);
+
+
+const articleID =
+params.get("id");
 
 
 
@@ -193,14 +201,10 @@ let currentUser = null;
 
 
 
-// CHECK LOGIN
+// CHECK USER LOGIN
 
 
 onAuthStateChanged(auth,(user)=>{
-
-
-console.log("AUTH STATUS:", user);
-
 
 
 currentUser = user;
@@ -210,15 +214,14 @@ currentUser = user;
 if(user){
 
 
+console.log("Logged in:", user.email);
+
+
 postComment.disabled = false;
 
 
 loginMessage.innerHTML =
 "";
-
-
-console.log("Signed in:", user.email);
-
 
 
 }
@@ -227,11 +230,14 @@ console.log("Signed in:", user.email);
 else{
 
 
+console.log("No user logged in");
+
+
 postComment.disabled = true;
 
 
 loginMessage.innerHTML =
-"Sign in to post a comment.";
+"Please sign in to comment.";
 
 
 }
@@ -251,35 +257,62 @@ loginMessage.innerHTML =
 async function loadArticle(){
 
 
-const ref = doc(db,"articles",articleID);
+if(!articleID){
+
+articleDiv.innerHTML =
+"<h2>No article selected</h2>";
+
+return;
+
+}
 
 
-const snapshot = await getDoc(ref);
+
+const ref =
+doc(db,"articles",articleID);
+
+
+
+const snapshot =
+await getDoc(ref);
 
 
 
 if(snapshot.exists()){
 
 
-const article = snapshot.data();
+const article =
+snapshot.data();
 
 
 
 articleDiv.innerHTML = `
 
 
-<h1>${article.title}</h1>
+<h1>
+${article.title}
+</h1>
 
 
 <p>
-<strong>Author:</strong>
+
+<strong>
+Author:
+</strong>
+
 ${article.authorName}
+
 </p>
 
 
 <p>
-<strong>Category:</strong>
+
+<strong>
+Category:
+</strong>
+
 ${article.category}
+
 </p>
 
 
@@ -303,13 +336,10 @@ else{
 articleDiv.innerHTML =
 "<h2>Article not found</h2>";
 
-
 }
 
 
 }
-
-
 
 
 loadArticle();
@@ -320,11 +350,14 @@ loadArticle();
 
 
 
-
-// ADD COMMENT
+// POST COMMENT
 
 
 postComment.addEventListener("click", async()=>{
+
+
+console.log("Current user:",currentUser);
+
 
 
 if(!currentUser){
@@ -332,6 +365,7 @@ if(!currentUser){
 
 alert("Please sign in first.");
 
+
 return;
 
 
@@ -339,14 +373,16 @@ return;
 
 
 
-const text = commentText.value.trim();
+const text =
+commentText.value.trim();
 
 
 
 if(text===""){
 
 
-alert("Write a comment first.");
+alert("Please write a comment.");
+
 
 return;
 
@@ -355,10 +391,13 @@ return;
 
 
 
+try{
+
+
 await addDoc(collection(db,"comments"),{
 
 
-articleID: articleID,
+articleID:articleID,
 
 
 text:text,
@@ -368,6 +407,13 @@ authorName:
 
 currentUser.displayName || 
 currentUser.email.split("@")[0],
+
+
+
+userID:
+
+currentUser.uid,
+
 
 
 date:new Date()
@@ -383,10 +429,27 @@ commentText.value="";
 loadComments();
 
 
+alert("Comment posted!");
+
+
+
+}
+
+
+catch(error){
+
+
+console.log(error);
+
+
+alert(error.message);
+
+
+}
+
+
+
 });
-
-
-
 
 
 
@@ -403,8 +466,8 @@ async function loadComments(){
 commentsDiv.innerHTML="";
 
 
-
-const q = query(
+const q =
+query(
 
 collection(db,"comments"),
 
@@ -416,7 +479,8 @@ orderBy("date","desc")
 
 
 
-const snapshot = await getDocs(q);
+const snapshot =
+await getDocs(q);
 
 
 
@@ -437,7 +501,8 @@ return;
 snapshot.forEach((comment)=>{
 
 
-const data = comment.data();
+const data =
+comment.data();
 
 
 
@@ -448,19 +513,33 @@ commentsDiv.innerHTML += `
 
 
 <h3>
+
+
+<a href="profile.html?id=${data.userID}">
+
+
 ${data.authorName}
+
+
+</a>
+
+
 </h3>
 
 
 <p>
+
 ${data.text}
+
 </p>
 
 
 </div>
 
 
+
 `;
+
 
 
 });
@@ -475,7 +554,6 @@ loadComments();
 
 
 </script>
-
 
 
 </body>
