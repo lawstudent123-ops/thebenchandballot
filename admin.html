@@ -53,24 +53,35 @@ Manage articles and comments.
 
 
 
+
 <h2>
 Articles
 </h2>
 
 
 <div id="articles">
-
 Loading articles...
-
 </div>
 
 
 
 
 
+<h2>
+Comments
+</h2>
+
+
+<div id="comments">
+Loading comments...
+</div>
+
+
+
+
 
 <h2>
-Add Comment
+Add Admin Comment
 </h2>
 
 
@@ -90,7 +101,6 @@ Add Comment
 
 
 </section>
-
 
 
 
@@ -159,6 +169,7 @@ appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
 
 
+
 const app = initializeApp(firebaseConfig);
 
 
@@ -171,15 +182,14 @@ const auth = getAuth(app);
 
 
 
-// YOUR ADMIN UID
 
-const ADMIN_UID = "bQpL4AEK1jc6bsrtJ3i8nVsXKG23";
-
-
+const ADMIN_UID =
+"bQpL4AEK1jc6bsrtJ3i8nVsXKG23";
 
 
 
-// PROTECT ADMIN PAGE
+
+
 
 onAuthStateChanged(auth,(user)=>{
 
@@ -204,22 +214,26 @@ window.location.href="index.html";
 
 
 
-
-
 const articles =
 document.getElementById("articles");
 
 
+const comments =
+document.getElementById("comments");
 
 
 
+
+
+
+
+// LOAD ARTICLES
 
 
 async function loadArticles(){
 
 
 articles.innerHTML="";
-
 
 
 const snapshot =
@@ -230,13 +244,14 @@ await getDocs(collection(db,"articles"));
 if(snapshot.empty){
 
 
-articles.innerHTML="<p>No articles found.</p>";
+articles.innerHTML =
+"<p>No articles.</p>";
+
 
 return;
 
 
 }
-
 
 
 
@@ -266,10 +281,9 @@ ${data.authorName}
 
 
 <p>
-Article ID:
-${article.id}
+Status:
+${data.status}
 </p>
-
 
 
 <button onclick="deleteArticle('${article.id}')">
@@ -279,16 +293,13 @@ Delete Article
 </button>
 
 
-
 </div>
 
 
 `;
 
 
-
 });
-
 
 
 }
@@ -299,22 +310,15 @@ Delete Article
 
 
 
-
 window.deleteArticle = async(id)=>{
 
 
-const confirmDelete =
-confirm("Delete this article?");
-
-
-
-if(confirmDelete){
+if(confirm("Delete this article?")){
 
 
 await deleteDoc(
 doc(db,"articles",id)
 );
-
 
 
 alert("Article deleted");
@@ -326,6 +330,113 @@ loadArticles();
 }
 
 
+};
+
+
+
+
+
+
+
+
+
+// LOAD COMMENTS
+
+
+async function loadComments(){
+
+
+comments.innerHTML="";
+
+
+const snapshot =
+await getDocs(collection(db,"comments"));
+
+
+
+if(snapshot.empty){
+
+
+comments.innerHTML =
+"<p>No comments.</p>";
+
+
+return;
+
+
+}
+
+
+
+snapshot.forEach(comment=>{
+
+
+const data =
+comment.data();
+
+
+
+comments.innerHTML += `
+
+
+<div class="card">
+
+
+<p>
+<strong>${data.authorName}</strong>
+</p>
+
+
+<p>
+${data.text}
+</p>
+
+
+
+<button onclick="deleteComment('${comment.id}')">
+
+Delete Comment
+
+</button>
+
+
+</div>
+
+
+`;
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+window.deleteComment = async(id)=>{
+
+
+if(confirm("Delete this comment?")){
+
+
+await deleteDoc(
+doc(db,"comments",id)
+);
+
+
+alert("Comment deleted");
+
+
+loadComments();
+
+
+}
+
 
 };
 
@@ -336,24 +447,25 @@ loadArticles();
 
 
 
+
+// ADD ADMIN COMMENT
+
+
 document
 .getElementById("addComment")
 .addEventListener("click",async()=>{
 
 
-
 const articleID =
-document.getElementById("articleID").value;
-
+document.getElementById("articleID").value.trim();
 
 
 const text =
-document.getElementById("commentText").value;
+document.getElementById("commentText").value.trim();
 
 
 
-
-if(articleID==="" || text===""){
+if(!articleID || !text){
 
 
 alert("Fill in both fields");
@@ -363,6 +475,7 @@ return;
 
 
 }
+
 
 
 
@@ -378,6 +491,9 @@ text:text,
 authorName:"Admin",
 
 
+userID:ADMIN_UID,
+
+
 date:new Date()
 
 
@@ -385,8 +501,15 @@ date:new Date()
 
 
 
+
 alert("Comment added!");
 
+
+
+document.getElementById("commentText").value="";
+
+
+loadComments();
 
 
 });
@@ -395,7 +518,11 @@ alert("Comment added!");
 
 
 
+
 loadArticles();
+
+loadComments();
+
 
 
 
