@@ -36,6 +36,7 @@ The Bench and Ballot
 
 
 
+
 <section class="write-section">
 
 
@@ -102,10 +103,14 @@ Don't have an account?
 
 
 
+
+
+
 <script type="module">
 
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 
 import {
@@ -118,9 +123,15 @@ GoogleAuthProvider,
 
 signInWithPopup,
 
-sendPasswordResetEmail
+sendPasswordResetEmail,
 
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+setPersistence,
+
+browserLocalPersistence
+
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
 
 
 
@@ -128,7 +139,8 @@ sendPasswordResetEmail
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+
+apiKey: "AIzaSyAW9aKXaSyawt_UnkEsbjS97c4mwO07dKY",
 
 authDomain: "the-bench-and-ballot.firebaseapp.com",
 
@@ -140,7 +152,10 @@ messagingSenderId: "56045247751",
 
 appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
+
 };
+
+
 
 
 
@@ -152,9 +167,17 @@ const auth = getAuth(app);
 
 
 
+// KEEP USER SIGNED IN BETWEEN PAGES
+
+setPersistence(auth, browserLocalPersistence);
 
 
-// Email sign in
+
+
+
+
+
+// EMAIL LOGIN
 
 
 document.getElementById("login").addEventListener("click", ()=>{
@@ -197,7 +220,8 @@ alert(error.message);
 
 
 
-// Google sign in
+
+// GOOGLE LOGIN
 
 
 document.getElementById("google").addEventListener("click", ()=>{
@@ -238,7 +262,8 @@ alert(error.message);
 
 
 
-// Forgot password
+
+// FORGOT PASSWORD
 
 
 document.getElementById("forgot").addEventListener("click", ()=>{
@@ -250,11 +275,15 @@ const email = document.getElementById("email").value.trim();
 
 if(!email){
 
+
 alert("Enter your email first.");
+
 
 return;
 
+
 }
+
 
 
 
@@ -265,6 +294,7 @@ sendPasswordResetEmail(auth,email)
 
 
 alert("Password reset email sent!");
+
 
 })
 
@@ -279,7 +309,6 @@ alert(error.message);
 
 
 });
-
 
 
 
