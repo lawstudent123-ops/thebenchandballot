@@ -58,7 +58,7 @@ Share your thoughts on law, politics, economics or society.
 Article Title
 </label>
 
-<input type="text" placeholder="Enter your title">
+<input id="title" type="text" placeholder="Enter your title">
 
 
 
@@ -67,7 +67,7 @@ Category
 </label>
 
 
-<select>
+<select id="category">
 
 <option>Law</option>
 
@@ -86,11 +86,11 @@ Your Article
 </label>
 
 
-<textarea placeholder="Write your article here..."></textarea>
+<textarea id="content" placeholder="Write your article here..."></textarea>
 
 
 
-<button type="button">
+<button id="publish" type="button">
 Publish Article
 </button>
 
@@ -100,6 +100,117 @@ Publish Article
 
 </section>
 
+
+
+<script type="module">
+
+// Firebase imports
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+import { 
+getFirestore,
+collection,
+addDoc
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+
+
+// Firebase configuration
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+  authDomain: "the-bench-and-ballot.firebaseapp.com",
+  projectId: "the-bench-and-ballot",
+  storageBucket: "the-bench-and-ballot.firebasestorage.app",
+  messagingSenderId: "56045247751",
+  appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+};
+
+
+
+// Connect Firebase
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+const auth = getAuth(app);
+
+
+
+let currentUser = null;
+
+
+
+// Check if user is logged in
+
+onAuthStateChanged(auth, (user)=>{
+
+currentUser = user;
+
+});
+
+
+
+// Publish article
+
+document.getElementById("publish").addEventListener("click", async ()=>{
+
+
+if(!currentUser){
+
+alert("Please sign in before publishing an article.");
+
+return;
+
+}
+
+
+
+const title = document.getElementById("title").value;
+
+const category = document.getElementById("category").value;
+
+const content = document.getElementById("content").value;
+
+
+
+await addDoc(collection(db,"articles"),{
+
+
+title: title,
+
+category: category,
+
+content: content,
+
+author: currentUser.email,
+
+status: "pending",
+
+date: new Date()
+
+
+});
+
+
+
+alert("Article submitted! It is now waiting for approval.");
+
+window.location.href="index.html";
+
+
+});
+
+
+</script>
 
 
 </body>
