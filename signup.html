@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -51,6 +52,14 @@ Join The Bench and Ballot and share your ideas.
 
 
 <label>
+Username
+</label>
+
+<input id="username" type="text" placeholder="Choose a username">
+
+
+
+<label>
 Email
 </label>
 
@@ -97,10 +106,12 @@ Continue with Google
 
 
 
+
 <script type="module">
 
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 
 import {
@@ -115,7 +126,8 @@ signInWithPopup,
 
 sendPasswordResetEmail
 
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 
 import {
@@ -126,7 +138,9 @@ doc,
 
 setDoc
 
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
 
 
 
@@ -153,6 +167,7 @@ appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
 
 
+
 const app = initializeApp(firebaseConfig);
 
 
@@ -166,12 +181,13 @@ const db = getFirestore(app);
 
 
 
-
-// Email signup
+// EMAIL SIGNUP
 
 
 document.getElementById("signup").addEventListener("click", async ()=>{
 
+
+const username = document.getElementById("username").value.trim();
 
 const email = document.getElementById("email").value.trim();
 
@@ -179,13 +195,40 @@ const password = document.getElementById("password").value.trim();
 
 
 
+
+if(!username){
+
+alert("Please enter a username.");
+
+return;
+
+}
+
+
+
+if(password.length < 6){
+
+alert("Password must be at least 6 characters.");
+
+return;
+
+}
+
+
+
+
+
 try{
 
 
 const result = await createUserWithEmailAndPassword(
+
 auth,
+
 email,
+
 password
+
 );
 
 
@@ -194,17 +237,20 @@ const user = result.user;
 
 
 
+
 await setDoc(doc(db,"users",user.uid),{
 
 
-email: user.email,
+username: username,
 
-name: user.email.split("@")[0],
+email: user.email,
 
 joined: new Date()
 
 
 });
+
+
 
 
 
@@ -218,10 +264,12 @@ window.location.href="index.html";
 }
 
 
+
 catch(error){
 
 
 alert(error.message);
+
 
 
 }
@@ -237,7 +285,7 @@ alert(error.message);
 
 
 
-// Google sign in
+// GOOGLE SIGN IN
 
 
 document.getElementById("google").addEventListener("click", async ()=>{
@@ -261,14 +309,15 @@ const user = result.user;
 await setDoc(doc(db,"users",user.uid),{
 
 
-email: user.email,
+username: user.displayName || "User",
 
-name: user.displayName || "User",
+email: user.email,
 
 joined: new Date()
 
 
 },{merge:true});
+
 
 
 
@@ -278,13 +327,16 @@ alert("Signed in with Google!");
 window.location.href="index.html";
 
 
+
 }
+
 
 
 catch(error){
 
 
 alert(error.message);
+
 
 
 }
@@ -300,13 +352,15 @@ alert(error.message);
 
 
 
-// Forgot password
+
+// PASSWORD RESET
 
 
 document.getElementById("forgot").addEventListener("click", ()=>{
 
 
 const email = document.getElementById("email").value.trim();
+
 
 
 
@@ -332,6 +386,7 @@ sendPasswordResetEmail(auth,email)
 alert("Password reset email sent. Check your inbox.");
 
 
+
 })
 
 
@@ -341,7 +396,9 @@ alert("Password reset email sent. Check your inbox.");
 alert(error.message);
 
 
+
 });
+
 
 
 });
@@ -355,3 +412,4 @@ alert(error.message);
 </body>
 
 </html>
+```
