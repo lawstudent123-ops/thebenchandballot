@@ -30,7 +30,6 @@ The Bench and Ballot
 <a href="write.html">Write</a>
 <a href="about.html">About</a>
 
-
 </nav>
 
 </header>
@@ -38,10 +37,12 @@ The Bench and Ballot
 
 
 
+
+
 <section class="write-section">
 
 
-<h1 id="welcome">
+<h1 id="username">
 Loading...
 </h1>
 
@@ -63,8 +64,6 @@ Articles
 </h2>
 
 
-
-
 <div id="articles">
 
 <p>
@@ -74,13 +73,6 @@ Loading articles...
 </div>
 
 
-
-<br>
-
-
-<button id="logout">
-Log Out
-</button>
 
 
 </section>
@@ -100,23 +92,13 @@ import { initializeApp } from
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 
-
-import {
-
-getAuth,
-
-onAuthStateChanged,
-
-signOut
-
-} from 
-"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
-
-
-
 import {
 
 getFirestore,
+
+doc,
+
+getDoc,
 
 collection,
 
@@ -124,15 +106,20 @@ query,
 
 where,
 
-getDocs,
-
-doc,
-
-getDoc
+getDocs
 
 } from 
 "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
+
+import {
+
+getAuth,
+
+onAuthStateChanged
+
+} from 
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 
 
@@ -140,6 +127,7 @@ getDoc
 
 
 const firebaseConfig = {
+
 
 apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
 
@@ -162,39 +150,34 @@ appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 const app = initializeApp(firebaseConfig);
 
 
-const auth = getAuth(app);
-
-
 const db = getFirestore(app);
 
 
+const auth = getAuth(app);
 
 
 
-const profileDiv =
+
+
+const username =
+document.getElementById("username");
+
+
+const profile =
 document.getElementById("profile");
 
 
-const articlesDiv =
+const articles =
 document.getElementById("articles");
 
 
-const welcome =
-document.getElementById("welcome");
-
-
-const logout =
-document.getElementById("logout");
 
 
 
-
-
-
+// GET PROFILE ID FROM URL
 
 const params =
 new URLSearchParams(window.location.search);
-
 
 
 let profileID =
@@ -203,16 +186,50 @@ params.get("id");
 
 
 
+// IF NO ID, SHOW LOGGED IN USER
 
 
-
+if(!profileID){
 
 
 onAuthStateChanged(auth,(user)=>{
 
 
+if(user){
 
-if(profileID){
+
+loadProfile(user.uid);
+
+
+}
+
+else{
+
+
+profile.innerHTML = `
+
+<p>
+You must sign in to view your profile.
+</p>
+
+<a href="login.html">
+Sign In
+</a>
+
+`;
+
+
+
+}
+
+
+});
+
+
+
+}
+
+else{
 
 
 loadProfile(profileID);
@@ -222,148 +239,68 @@ loadProfile(profileID);
 
 
 
-else if(user){
-
-
-loadProfile(user.uid);
-
-
-}
 
 
 
-else{
-
-
-welcome.innerHTML =
-"Guest Profile 👋";
 
 
 
-profileDiv.innerHTML = `
-
-
-<p>
-You must be signed in to view your profile.
-</p>
-
-
-<a href="login.html">
-Sign In
-</a>
-
-
-`;
+async function loadProfile(uid){
 
 
 
-articlesDiv.innerHTML="";
+const userRef =
+doc(db,"users",uid);
 
 
-logout.style.display="none";
+
+const userSnap =
+await getDoc(userRef);
+
+
+
+if(!userSnap.exists()){
+
+
+username.innerHTML="User not found";
+
+
+return;
 
 
 }
 
 
 
-});
+const user =
+userSnap.data();
+
+
+
+username.innerHTML =
+`${user.username || user.name || "User"} 👋`;
 
 
 
 
 
-
-
-
-
-async function loadProfile(userID){
-
-
-
-const userDoc = await getDoc(
-
-doc(db,"users",userID)
-
-);
-
-
-
-
-
-let username = "User";
-
-let bio = "";
-
-
-
-
-
-if(userDoc.exists()){
-
-
-
-const data =
-userDoc.data();
-
-
-
-console.log("PROFILE DATA:", data);
-
-
-
-// accepts both username and name
-
-username =
-data.username || data.name || "User";
-
-
-
-bio =
-data.bio || "";
-
-
-
-}
-
-else{
-
-
-console.log("NO USER FOUND");
-
-
-}
-
-
-
-
-
-
-
-welcome.innerHTML =
-
-`${username}'s Profile 👋`;
-
-
-
-
-
-
-
-profileDiv.innerHTML = `
+profile.innerHTML = `
 
 
 <h2>
-
-${username}
-
+${user.username || user.name || "User"}
 </h2>
 
 
 <p>
+Email:
+${user.email}
+</p>
 
-${bio}
 
+<p>
+Joined:
+${new Date(user.joined.seconds * 1000).toDateString()}
 </p>
 
 
@@ -374,12 +311,12 @@ ${bio}
 
 
 
-
-const q = query(
+const q =
+query(
 
 collection(db,"articles"),
 
-where("authorID","==",userID)
+where("authorID","==",uid)
 
 );
 
@@ -392,22 +329,15 @@ await getDocs(q);
 
 
 
-articlesDiv.innerHTML="";
-
-
+articles.innerHTML="";
 
 
 
 if(snapshot.empty){
 
 
-articlesDiv.innerHTML = `
-
-<p>
-No articles written yet.
-</p>
-
-`;
+articles.innerHTML=
+"<p>No articles written yet.</p>";
 
 return;
 
@@ -418,8 +348,7 @@ return;
 
 
 
-
-snapshot.forEach((articleDoc)=>{
+snapshot.forEach(articleDoc=>{
 
 
 const article =
@@ -427,37 +356,32 @@ articleDoc.data();
 
 
 
-
-articlesDiv.innerHTML += `
+articles.innerHTML += `
 
 
 <div class="card">
 
 
 <h3>
-
-
-<a href="article.html?id=${articleDoc.id}">
-
 ${article.title}
-
-</a>
-
-
 </h3>
 
 
 
 <p>
-
 Category:
 ${article.category}
-
 </p>
 
 
 
+<a href="article.html?id=${articleDoc.id}">
+Read Article →
+</a>
+
+
 </div>
+
 
 
 `;
@@ -472,32 +396,9 @@ ${article.category}
 
 
 
-
-
-
-
-
-
-
-logout.addEventListener("click",()=>{
-
-
-signOut(auth);
-
-
-window.location.href="index.html";
-
-
-});
-
-
-
-
-
 </script>
 
 
 </body>
 
 </html>
-<script type="module" src="auth.js"></script>
