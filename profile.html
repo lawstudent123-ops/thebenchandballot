@@ -37,14 +37,12 @@ The Bench and Ballot
 
 
 
-
 <section class="write-section">
 
 
 <h1>
 My Profile
 </h1>
-
 
 
 <div id="profile">
@@ -54,8 +52,6 @@ Loading profile...
 </p>
 
 </div>
-
-
 
 
 <h2>
@@ -72,10 +68,7 @@ No articles published yet.
 </div>
 
 
-
 </section>
-
-
 
 
 
@@ -101,8 +94,7 @@ onAuthStateChanged
 
 const firebaseConfig = {
 
-
-apiKey: "AIzaSyAW9aKXaAWs_tUnkEsbjS97c4mwO07dKY",
+apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
 
 authDomain: "the-bench-and-ballot.firebaseapp.com",
 
@@ -127,15 +119,22 @@ const auth = getAuth(app);
 
 
 
-
-
 const profile = document.getElementById("profile");
 
 
 
 
 
-onAuthStateChanged(auth,(user)=>{
+auth.onAuthStateChanged = onAuthStateChanged;
+
+
+
+
+onAuthStateChanged(auth, (user)=>{
+
+
+console.log("Current user:", user);
+
 
 
 if(user){
@@ -147,9 +146,11 @@ profile.innerHTML = `
 ${user.displayName || "User"}
 </h2>
 
+
 <p>
 Email: ${user.email}
 </p>
+
 
 <p>
 Account created:
@@ -158,8 +159,9 @@ ${new Date(user.metadata.creationTime).toDateString()}
 
 `;
 
-}
 
+
+}
 
 else{
 
@@ -169,6 +171,7 @@ profile.innerHTML = `
 <p>
 You must be signed in to view your profile.
 </p>
+
 
 <a href="login.html">
 Sign In
@@ -184,7 +187,6 @@ Sign In
 
 
 </script>
-
 
 
 
