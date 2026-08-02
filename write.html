@@ -32,8 +32,9 @@ The Bench and Ballot
 
 </nav>
 
-
 </header>
+
+
 
 
 
@@ -51,6 +52,7 @@ Share your thoughts on law, politics, economics or society.
 
 
 
+
 <form>
 
 
@@ -59,6 +61,8 @@ Article Title
 </label>
 
 <input id="title" type="text" placeholder="Enter your title">
+
+
 
 
 
@@ -81,6 +85,8 @@ Category
 
 
 
+
+
 <label>
 Your Article
 </label>
@@ -90,9 +96,12 @@ Your Article
 
 
 
+
+
 <button id="publish" type="button">
 Publish Article
 </button>
+
 
 
 </form>
@@ -102,29 +111,39 @@ Publish Article
 
 
 
+
+
+
+
 <script type="module">
 
-
-// Firebase imports
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 
-import { 
+import {
+
 getFirestore,
+
 collection,
+
 addDoc
+
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 
+
 import {
+
 getAuth,
+
 onAuthStateChanged
+
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 
 
-// Firebase configuration
+
 
 const firebaseConfig = {
 
@@ -144,13 +163,17 @@ appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
 
 
-// Connect Firebase
+
+
 
 const app = initializeApp(firebaseConfig);
 
+
 const db = getFirestore(app);
 
+
 const auth = getAuth(app);
+
 
 
 
@@ -158,47 +181,69 @@ let currentUser = null;
 
 
 
-// Check login status
 
-onAuthStateChanged(auth, (user)=>{
+
+
+onAuthStateChanged(auth,(user)=>{
+
 
 currentUser = user;
+
 
 });
 
 
 
 
-// Publish article
+
+
 
 document.getElementById("publish").addEventListener("click", async ()=>{
 
 
+
 if(!currentUser){
+
 
 alert("Please sign in before publishing an article.");
 
+
 return;
+
 
 }
 
 
 
-const title = document.getElementById("title").value;
+
+
+const title = document.getElementById("title").value.trim();
+
 
 const category = document.getElementById("category").value;
 
-const content = document.getElementById("content").value;
+
+const content = document.getElementById("content").value.trim();
+
+
+
 
 
 
 if(title === "" || content === ""){
 
+
 alert("Please complete your article before publishing.");
+
 
 return;
 
+
 }
+
+
+
+
 
 
 
@@ -207,36 +252,62 @@ await addDoc(collection(db,"articles"),{
 
 title: title,
 
+
 category: category,
+
 
 content: content,
 
-author: currentUser.email,
+
+
+// User information
+
+authorID: currentUser.uid,
+
+
+authorEmail: currentUser.email,
+
+
+authorName: currentUser.displayName || currentUser.email.split("@")[0],
+
+
 
 
 // AI review system
 
 status: "AI checking",
 
+
 aiReview: "waiting",
+
+
 
 
 date: new Date()
 
 
+
 });
+
+
 
 
 
 alert("Article submitted! AI is now checking your article.");
 
+
 window.location.href="index.html";
+
 
 
 });
 
 
+
 </script>
+
+
+
 
 
 </body>
