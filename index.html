@@ -175,6 +175,46 @@ Read Article →
 </footer>
 
 
+
+<!-- FIREBASE CONNECTION -->
+
+<script type="module">
+
+// Import Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+
+// Your Firebase configuration
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAW9aKXaFSawt_UnkEsbjS97c4mwO07dKY",
+  authDomain: "the-bench-and-ballot.firebaseapp.com",
+  projectId: "the-bench-and-ballot",
+  storageBucket: "the-bench-and-ballot.firebasestorage.app",
+  messagingSenderId: "56045247751",
+  appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+};
+
+
+// Start Firebase
+
+const app = initializeApp(firebaseConfig);
+
+
+// Connect Authentication and Database
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+
+console.log("Firebase connected successfully!");
+
+</script>
+
+
+
 </body>
 
 </html>
