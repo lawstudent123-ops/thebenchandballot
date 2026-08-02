@@ -1,7 +1,7 @@
-console.log("InsightHub loaded successfully");
+console.log("The Bench and Ballot loaded successfully");
 
 
-const button=document.querySelector("button");
+const button = document.querySelector("button");
 
 
 button.addEventListener(
