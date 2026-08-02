@@ -39,7 +39,9 @@ The Bench and Ballot
 
 
 
+
 <section class="write-section">
+
 
 
 <h1 id="username">
@@ -48,34 +50,36 @@ Loading...
 
 
 
+
 <div id="profile">
 
-<p>
 Loading profile...
-</p>
 
 </div>
+
 
 
 
 
 <h2>
-Articles
+My Articles
 </h2>
+
+
 
 
 <div id="articles">
 
-<p>
 Loading articles...
-</p>
 
 </div>
 
 
 
 
+
 </section>
+
 
 
 
@@ -126,6 +130,7 @@ onAuthStateChanged
 
 
 
+
 const firebaseConfig = {
 
 
@@ -142,6 +147,7 @@ messagingSenderId: "56045247751",
 appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
 };
+
 
 
 
@@ -174,42 +180,19 @@ document.getElementById("articles");
 
 
 
-// GET PROFILE ID FROM URL
-
-const params =
-new URLSearchParams(window.location.search);
 
 
-let profileID =
-params.get("id");
+onAuthStateChanged(auth,async(user)=>{
 
 
 
-
-// IF NO ID, SHOW LOGGED IN USER
-
-
-if(!profileID){
-
-
-onAuthStateChanged(auth,(user)=>{
-
-
-if(user){
-
-
-loadProfile(user.uid);
-
-
-}
-
-else{
+if(!user){
 
 
 profile.innerHTML = `
 
 <p>
-You must sign in to view your profile.
+You are not signed in.
 </p>
 
 <a href="login.html">
@@ -218,39 +201,18 @@ Sign In
 
 `;
 
-
-
-}
-
-
-});
-
-
-
-}
-
-else{
-
-
-loadProfile(profileID);
+return;
 
 
 }
 
 
 
-
-
-
-
-
-
-async function loadProfile(uid){
 
 
 
 const userRef =
-doc(db,"users",uid);
+doc(db,"users",user.uid);
 
 
 
@@ -259,26 +221,31 @@ await getDoc(userRef);
 
 
 
-if(!userSnap.exists()){
 
 
-username.innerHTML="User not found";
+let name =
+user.displayName || "User";
 
 
-return;
+
+
+
+if(userSnap.exists()){
+
+
+name =
+userSnap.data().username || name;
 
 
 }
 
 
 
-const user =
-userSnap.data();
 
 
 
 username.innerHTML =
-`${user.username || user.name || "User"} 👋`;
+`${name} 👋`;
 
 
 
@@ -288,7 +255,7 @@ profile.innerHTML = `
 
 
 <h2>
-${user.username || user.name || "User"}
+${name}
 </h2>
 
 
@@ -298,13 +265,10 @@ ${user.email}
 </p>
 
 
-<p>
-Joined:
-${new Date(user.joined.seconds * 1000).toDateString()}
-</p>
-
-
 `;
+
+
+
 
 
 
@@ -316,9 +280,11 @@ query(
 
 collection(db,"articles"),
 
-where("authorID","==",uid)
+where("authorID","==",user.uid)
 
 );
+
+
 
 
 
@@ -329,15 +295,19 @@ await getDocs(q);
 
 
 
+
 articles.innerHTML="";
+
+
 
 
 
 if(snapshot.empty){
 
 
-articles.innerHTML=
+articles.innerHTML =
 "<p>No articles written yet.</p>";
+
 
 return;
 
@@ -348,11 +318,11 @@ return;
 
 
 
-snapshot.forEach(articleDoc=>{
+snapshot.forEach(article=>{
 
 
-const article =
-articleDoc.data();
+const data =
+article.data();
 
 
 
@@ -363,25 +333,22 @@ articles.innerHTML += `
 
 
 <h3>
-${article.title}
+${data.title}
 </h3>
-
 
 
 <p>
 Category:
-${article.category}
+${data.category}
 </p>
 
 
-
-<a href="article.html?id=${articleDoc.id}">
+<a href="article.html?id=${article.id}">
 Read Article →
 </a>
 
 
 </div>
-
 
 
 `;
@@ -392,7 +359,9 @@ Read Article →
 
 
 
-}
+});
+
+
 
 
 
