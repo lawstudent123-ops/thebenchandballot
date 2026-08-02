@@ -38,7 +38,6 @@ The Bench and Ballot
 
 
 
-
 <section class="write-section">
 
 
@@ -59,10 +58,10 @@ Loading profile...
 
 
 
-
 <h2>
 Articles
 </h2>
+
 
 
 
@@ -76,14 +75,12 @@ Loading articles...
 
 
 
-
 <br>
 
 
 <button id="logout">
 Log Out
 </button>
-
 
 
 </section>
@@ -162,7 +159,6 @@ appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
 
 
 
-
 const app = initializeApp(firebaseConfig);
 
 
@@ -196,9 +192,6 @@ document.getElementById("logout");
 
 
 
-// GET PROFILE ID FROM URL
-
-
 const params =
 new URLSearchParams(window.location.search);
 
@@ -213,19 +206,13 @@ params.get("id");
 
 
 
-// IF NO ID, SHOW LOGGED IN USER PROFILE
 
 
 onAuthStateChanged(auth,(user)=>{
 
 
-if(!profileID){
 
-
-if(user){
-
-
-profileID=user.uid;
+if(profileID){
 
 
 loadProfile(profileID);
@@ -234,23 +221,37 @@ loadProfile(profileID);
 }
 
 
+
+else if(user){
+
+
+loadProfile(user.uid);
+
+
+}
+
+
+
 else{
 
 
 welcome.innerHTML =
-"Guest Profile";
+"Guest Profile 👋";
+
 
 
 profileDiv.innerHTML = `
 
+
 <p>
-Please sign in to view your profile.
+You must be signed in to view your profile.
 </p>
 
 
 <a href="login.html">
 Sign In
 </a>
+
 
 `;
 
@@ -260,18 +261,6 @@ articlesDiv.innerHTML="";
 
 
 logout.style.display="none";
-
-
-}
-
-
-}
-
-
-else{
-
-
-loadProfile(profileID);
 
 
 }
@@ -292,8 +281,7 @@ async function loadProfile(userID){
 
 
 
-const userDoc =
-await getDoc(
+const userDoc = await getDoc(
 
 doc(db,"users",userID)
 
@@ -302,13 +290,10 @@ doc(db,"users",userID)
 
 
 
-let username =
-"User";
 
+let username = "User";
 
-
-let bio =
-"";
+let bio = "";
 
 
 
@@ -317,17 +302,34 @@ let bio =
 if(userDoc.exists()){
 
 
+
 const data =
 userDoc.data();
 
 
+
+console.log("PROFILE DATA:", data);
+
+
+
+// accepts both username and name
+
 username =
-data.username || "User";
+data.username || data.name || "User";
+
 
 
 bio =
 data.bio || "";
 
+
+
+}
+
+else{
+
+
+console.log("NO USER FOUND");
 
 
 }
@@ -358,13 +360,11 @@ ${username}
 </h2>
 
 
-
 <p>
 
 ${bio}
 
 </p>
-
 
 
 `;
@@ -375,9 +375,7 @@ ${bio}
 
 
 
-
-const q =
-query(
+const q = query(
 
 collection(db,"articles"),
 
@@ -388,17 +386,13 @@ where("authorID","==",userID)
 
 
 
-
-
 const snapshot =
 await getDocs(q);
 
 
 
 
-
 articlesDiv.innerHTML="";
-
 
 
 
@@ -437,9 +431,7 @@ articleDoc.data();
 articlesDiv.innerHTML += `
 
 
-
 <div class="card">
-
 
 
 <h3>
@@ -468,7 +460,6 @@ ${article.category}
 </div>
 
 
-
 `;
 
 
@@ -486,7 +477,6 @@ ${article.category}
 
 
 
-// LOG OUT
 
 
 logout.addEventListener("click",()=>{
