@@ -140,7 +140,6 @@ browserLocalPersistence
 
 
 
-
 const firebaseConfig = {
 
 
@@ -171,9 +170,6 @@ const auth = getAuth(app);
 
 
 
-
-// Keep user signed in across pages
-
 await setPersistence(auth, browserLocalPersistence);
 
 
@@ -182,26 +178,33 @@ await setPersistence(auth, browserLocalPersistence);
 
 
 
-// EMAIL LOGIN
+// LOGIN
 
 
-document.getElementById("login").addEventListener("click", async ()=>{
+document.getElementById("login").addEventListener("click", async()=>{
 
 
-const email = document.getElementById("email").value.trim();
+const email =
+document.getElementById("email").value.trim();
 
-const password = document.getElementById("password").value.trim();
+
+const password =
+document.getElementById("password").value.trim();
+
 
 
 
 try{
 
 
-await signInWithEmailAndPassword(auth,email,password);
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
 
 
 alert("Signed in successfully!");
-
 
 window.location.href="index.html";
 
@@ -209,10 +212,11 @@ window.location.href="index.html";
 }
 
 
+
 catch(error){
 
 
-alert(error.message);
+alert(error.code);
 
 
 }
@@ -227,10 +231,11 @@ alert(error.message);
 
 
 
+
 // GOOGLE LOGIN
 
 
-document.getElementById("google").addEventListener("click", async ()=>{
+document.getElementById("google").addEventListener("click", async()=>{
 
 
 const provider = new GoogleAuthProvider();
@@ -255,10 +260,11 @@ window.location.href="index.html";
 catch(error){
 
 
-alert(error.message);
+alert(error.code);
 
 
 }
+
 
 
 });
@@ -270,24 +276,27 @@ alert(error.message);
 
 
 
-// PASSWORD RESET
+
+// FORGOT PASSWORD
 
 
-document.getElementById("forgot").addEventListener("click", async (e)=>{
+document.getElementById("forgot").addEventListener("click", async(e)=>{
 
 
 e.preventDefault();
 
 
-const email = document.getElementById("email").value.trim();
+
+const email =
+document.getElementById("email").value.trim();
 
 
 
-if(!email){
+
+if(email === ""){
 
 
-alert("Enter your email first.");
-
+alert("Please enter your email first.");
 
 return;
 
@@ -296,25 +305,39 @@ return;
 
 
 
+
 try{
 
 
-await sendPasswordResetEmail(auth,email);
+await sendPasswordResetEmail(
+auth,
+email
+);
 
 
-alert("Password reset email sent!");
+
+alert("Password reset email sent! Check your Gmail.");
+
 
 
 }
+
 
 
 catch(error){
 
 
-alert(error.message);
+console.log(error);
+
+
+alert(
+"Password reset failed: " + error.code
+);
+
 
 
 }
+
 
 
 });
@@ -327,4 +350,3 @@ alert(error.message);
 </body>
 
 </html>
-<script type="module" src="auth.js"></script>
