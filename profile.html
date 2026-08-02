@@ -48,9 +48,7 @@ My Profile
 
 <div id="profile">
 
-<p>
-Checking account...
-</p>
+<p>Loading profile...</p>
 
 </div>
 
@@ -64,16 +62,13 @@ My Articles
 
 <div id="articles">
 
-<p>
-No articles published yet.
-</p>
+<p>Loading articles...</p>
 
 </div>
 
 
 
 </section>
-
 
 
 
@@ -93,6 +88,21 @@ getAuth,
 onAuthStateChanged
 
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+
+import {
+
+getFirestore,
+
+collection,
+
+query,
+
+where,
+
+getDocs
+
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 
 
@@ -124,18 +134,22 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 
+const db = getFirestore(app);
+
+
+
+
+
 const profile = document.getElementById("profile");
 
+const articles = document.getElementById("articles");
 
 
 
 
-onAuthStateChanged(auth, (user)=>{
 
 
-console.log("Current user:", user);
-
-
+onAuthStateChanged(auth, async(user)=>{
 
 
 if(user){
@@ -147,23 +161,103 @@ profile.innerHTML = `
 ${user.displayName || "User"}
 </h2>
 
-
 <p>
 Email: ${user.email}
 </p>
-
 
 <p>
 Account created:
 ${new Date(user.metadata.creationTime).toDateString()}
 </p>
 
+`;
+
+
+
+
+
+const q = query(
+
+collection(db,"articles"),
+
+where("authorID","==",user.uid)
+
+);
+
+
+
+
+
+const snapshot = await getDocs(q);
+
+
+
+
+if(snapshot.empty){
+
+
+articles.innerHTML = `
+
+<p>
+No articles written yet.
+</p>
+
+`;
+
+return;
+
+
+}
+
+
+
+
+
+articles.innerHTML = "";
+
+
+
+snapshot.forEach((doc)=>{
+
+
+const article = doc.data();
+
+
+
+articles.innerHTML += `
+
+<div class="card">
+
+
+<h3>
+${article.title}
+</h3>
+
+
+<p>
+Category: ${article.category}
+</p>
+
+
+<p>
+Status: ${article.status}
+</p>
+
+
+</div>
 
 `;
 
 
 
+});
+
+
+
+
 }
+
+
 
 else{
 
@@ -171,18 +265,14 @@ else{
 profile.innerHTML = `
 
 <p>
-You are not signed in.
+You must be signed in.
 </p>
-
 
 <a href="login.html">
 Sign In
 </a>
 
-
 `;
-
-
 
 }
 
