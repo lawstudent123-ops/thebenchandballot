@@ -1,98 +1,110 @@
 import { 
-getAuth,
-onAuthStateChanged,
-signOut
-} from 
-"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 
 const auth = getAuth();
 
 
-const nav = document.querySelector("nav");
+
+onAuthStateChanged(auth, (user) => {
 
 
-if(nav){
+    const nav = document.querySelector("nav");
 
 
-onAuthStateChanged(auth,(user)=>{
-
-
-let oldButtons = document.getElementById("firebaseButtons");
-
-
-if(oldButtons){
-oldButtons.remove();
-}
+    if (!nav) return;
 
 
 
+    // Remove old Firebase buttons if they exist
 
-const div = document.createElement("div");
+    const oldButtons = document.getElementById("firebaseButtons");
 
-div.id = "firebaseButtons";
+
+    if (oldButtons) {
+        oldButtons.remove();
+    }
 
 
 
 
+    const authDiv = document.createElement("div");
 
-if(user){
-
-
-div.innerHTML = `
-
-<a href="profile.html">
-Profile
-</a>
-
-
-<a href="#" id="logoutButton">
-Sign Out
-</a>
-
-`;
+    authDiv.id = "firebaseButtons";
 
 
 
-div.querySelector("#logoutButton")
-.addEventListener("click",async(e)=>{
 
-e.preventDefault();
 
-await signOut(auth);
+    if (user) {
 
-location.reload();
+
+        authDiv.innerHTML = `
+
+        <a href="profile.html">
+            Profile
+        </a>
+
+
+        <a href="#" id="logoutButton">
+            Sign Out
+        </a>
+
+        `;
+
+
+
+        const logoutButton =
+        authDiv.querySelector("#logoutButton");
+
+
+
+        logoutButton.addEventListener("click", async (e)=>{
+
+
+            e.preventDefault();
+
+
+            await signOut(auth);
+
+
+            window.location.reload();
+
+
+        });
+
+
+
+    } 
+
+
+
+
+
+    else {
+
+
+        authDiv.innerHTML = `
+
+        <a href="login.html">
+            Sign In
+        </a>
+
+        `;
+
+
+    }
+
+
+
+
+
+
+    nav.appendChild(authDiv);
+
+
 
 });
-
-
-
-}
-
-
-
-else{
-
-
-div.innerHTML = `
-
-<a href="login.html">
-Sign In
-</a>
-
-`;
-
-
-
-}
-
-
-
-
-nav.appendChild(div);
-
-
-
-});
-
-}
