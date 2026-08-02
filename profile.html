@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Profile | The Bench and Ballot</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+The Bench and Ballot
+</div>
+
+
+<nav>
+
+<a href="index.html">Home</a>
+<a href="articles.html">Articles</a>
+<a href="write.html">Write</a>
+<a href="about.html">About</a>
+
+</nav>
+
+</header>
+
+
+
+
+
+<section class="write-section">
+
+
+<h1>
+My Profile
+</h1>
+
+
+
+<div id="profile">
+
+<p>
+Loading profile...
+</p>
+
+</div>
+
+
+
+
+<h2>
+My Articles
+</h2>
+
+
+<div id="articles">
+
+<p>
+No articles published yet.
+</p>
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+
+import {
+
+getAuth,
+
+onAuthStateChanged
+
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+
+
+
+
+const firebaseConfig = {
+
+
+apiKey: "AIzaSyAW9aKXaAWs_tUnkEsbjS97c4mwO07dKY",
+
+authDomain: "the-bench-and-ballot.firebaseapp.com",
+
+projectId: "the-bench-and-ballot",
+
+storageBucket: "the-bench-and-ballot.firebasestorage.app",
+
+messagingSenderId: "56045247751",
+
+appId: "1:56045247751:web:22b9dcb631f3e95d2179a2"
+
+};
+
+
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const auth = getAuth(app);
+
+
+
+
+
+const profile = document.getElementById("profile");
+
+
+
+
+
+onAuthStateChanged(auth,(user)=>{
+
+
+if(user){
+
+
+profile.innerHTML = `
+
+<h2>
+${user.displayName || "User"}
+</h2>
+
+<p>
+Email: ${user.email}
+</p>
+
+<p>
+Account created:
+${new Date(user.metadata.creationTime).toDateString()}
+</p>
+
+`;
+
+}
+
+
+else{
+
+
+profile.innerHTML = `
+
+<p>
+You must be signed in to view your profile.
+</p>
+
+<a href="login.html">
+Sign In
+</a>
+
+`;
+
+}
+
+
+});
+
+
+
+</script>
+
+
+
+
+</body>
+
+</html>
